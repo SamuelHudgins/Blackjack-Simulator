@@ -225,7 +225,7 @@
                         <Font size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#switchToBettingScene" text="Place Bet">
+                  <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#switchToBettingScene" text="Place Bet" textAlignment="CENTER">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -237,6 +237,11 @@
                   <Button fx:id="hitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onHitButtonPressed" prefWidth="100.0" text="Hit">
                      <font>
                         <Font size="24.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="doubleBetButton" alignment="CENTER" contentDisplay="CENTER" layoutX="135.0" layoutY="35.0" mnemonicParsing="false" onAction="#onDoubleButtonPressed" prefWidth="100.0" text="Double">
+                     <font>
+                        <Font size="21.0" />
                      </font>
                   </Button>
                   <Button fx:id="standButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onStandButtonPressed" prefWidth="100.0" text="Stand">

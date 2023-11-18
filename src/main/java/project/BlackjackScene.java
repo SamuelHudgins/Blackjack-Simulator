@@ -26,6 +26,7 @@ public class BlackjackScene extends SceneController {
 	@FXML private Label playerBetLabel;	
 	
 	@FXML private Button hitButton;	
+	@FXML private Button doubleBetButton;	
 	@FXML private Button standButton;	
 	
 	private Hand playerHand;	
@@ -76,6 +77,7 @@ public class BlackjackScene extends SceneController {
 		dealerHand = new Hand();
 		
 		hitButton.setVisible(false);
+		doubleBetButton.setVisible(false);
 		standButton.setVisible(false);
 		disperseCards();
 	}
@@ -95,8 +97,8 @@ public class BlackjackScene extends SceneController {
 	public void setPlayer(Player player, int betAmount) {
 		this.player = player;
 		playerBet = betAmount;
-		playerBankLabel.setText("Bank: " + this.player.getBalance());
-		playerBetLabel.setText("Bet: " + Integer.toString(playerBet));
+		playerBankLabel.setText("Bank: $" + (this.player.getBalance() - betAmount));
+		playerBetLabel.setText("Bet: $" + Integer.toString(playerBet));
 	}
 	
 	private void disperseCards() {
@@ -126,6 +128,8 @@ public class BlackjackScene extends SceneController {
 		duration += increment;
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
 			hitButton.setVisible(true);
+			boolean canDouble = (player.getBalance() - (playerBet * 2)) >= 0;
+			doubleBetButton.setVisible(canDouble);
 			standButton.setVisible(true);
 			checkPlayerHand(); 
 		}));
@@ -138,6 +142,23 @@ public class BlackjackScene extends SceneController {
 		hitHand(playerHand);
 		updateHandDisplay(playerHandDisplay, playerHand);
 		checkPlayerHand();
+		doubleBetButton.setVisible(false);
+	}
+	
+	@FXML
+	private void onDoubleButtonPressed() {
+		playerBet *= 2;
+		playerBankLabel.setText("Bank: $" + (this.player.getBalance() - playerBet));
+		playerBetLabel.setText("Bet: $" + Integer.toString(playerBet));
+		Routine.doAfter(new Action() {			
+			@Override
+			public void invoke() {
+				hitHand(playerHand);
+				updateHandDisplay(playerHandDisplay, playerHand);
+				checkPlayerHand();
+				endPlayerTurn(true);
+			}
+		}, 1000);
 	}
 	
 	@FXML
@@ -153,6 +174,7 @@ public class BlackjackScene extends SceneController {
 	
 	private void endPlayerTurn(boolean dealerHits) {
 		hitButton.setVisible(false);
+		doubleBetButton.setVisible(false);
 		standButton.setVisible(false);
 		revealDealerCard();
 		if (dealerHits) dealerHits();
