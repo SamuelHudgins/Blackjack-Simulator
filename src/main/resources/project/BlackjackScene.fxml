@@ -1,14 +1,252 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BlackjackScene">
    <children>
-      <Label layoutX="258.0" layoutY="14.0" text="Blackjack Scene" textAlignment="CENTER" />
-      <Button layoutX="255.0" layoutY="174.0" mnemonicParsing="false" onAction="#switchToBettingScene" text="Betting Scene" />
-      <Button layoutX="243.0" layoutY="200.0" mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu Scene" />
-      <Label fx:id="playerBetLabel" layoutX="290.0" layoutY="78.0" text="Bet:" textAlignment="CENTER" />
+      <StackPane prefHeight="650.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="658.0" fitWidth="1204.0" pickOnBounds="true" StackPane.alignment="CENTER">
+               <image>
+                  <Image url="@/images/Green_Felt.png" />
+               </image>
+            </ImageView>
+            <GridPane alignment="CENTER" prefHeight="525.0" prefWidth="747.0">
+              <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="playerStatusLabel" alignment="CENTER" contentDisplay="CENTER" text="label" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets right="50.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="dealerStatusLabel" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets right="50.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="playerHandLabel" text="0" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="48.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets right="50.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="dealerHandLabel" text="0" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT">
+                     <font>
+                        <Font size="48.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets right="50.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="matchResultsLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="70.0" prefWidth="308.0" text="Label" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="43.0" />
+                     </font>
+                  </Label>
+                  <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="50.0" orientation="VERTICAL" prefHeight="180.0" prefWidth="446.0" GridPane.columnIndex="1" GridPane.halignment="LEFT">
+                     <children>
+                        <StackPane fx:id="dealerCardStackPane" alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="357.0">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="25.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="50.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="75.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="100.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="125.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="150.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="175.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="200.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="225.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="250.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="50.0" orientation="VERTICAL" prefHeight="180.0" prefWidth="446.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                     <children>
+                        <StackPane fx:id="playerCardStackPane" alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="357.0">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="25.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="50.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="75.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="100.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="125.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="150.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="175.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="200.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="225.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="250.0">
+                                 <image>
+                                    <Image url="@../images/A-S.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </FlowPane>
+               </children>
+               <StackPane.margin>
+                  <Insets bottom="150.0" left="200.0" right="200.0" top="50.0" />
+               </StackPane.margin>
+            </GridPane>
+         </children>
+      </StackPane>
+      <Label fx:id="playerBankLabel" layoutX="26.0" layoutY="26.0" text="Bank:" textFill="WHITE">
+         <font>
+            <Font size="36.0" />
+         </font></Label>
+      <Label fx:id="playerBetLabel" layoutX="26.0" layoutY="80.0" text="Bet:" textFill="WHITE">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <StackPane layoutX="403.0" layoutY="548.0">
+         <children>
+            <HBox fx:id="endMatchHBox" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="449.0" spacing="25.0">
+               <children>
+                  <Button fx:id="mainMenuButton" mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#switchToBettingScene" text="Place Bet">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox fx:id="matchHBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="449.0" spacing="25.0">
+               <children>
+                  <Button fx:id="hitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onHitButtonPressed" prefWidth="100.0" text="Hit">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="standButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onStandButtonPressed" prefWidth="100.0" text="Stand">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
    </children>
 </AnchorPane>

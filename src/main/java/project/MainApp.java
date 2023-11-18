@@ -1,5 +1,7 @@
 package project;
 
+//import java.io.File;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,9 +15,10 @@ public class MainApp extends Application {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource(Scenes.START.toPath()));
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/css/betSlider.css").toExternalForm());
 			SceneController.setStage(startStage);
 			startStage.setScene(scene);
+			startStage.setTitle("Blackjack Simulator");
 			startStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -23,6 +26,7 @@ public class MainApp extends Application {
 	}
 
 	public static void main(String[] args) {
+		Player.setPlayerInstance("Player");
 		launch(args);	
 	}
 

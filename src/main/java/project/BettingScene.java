@@ -8,9 +8,9 @@ import javafx.scene.control.Slider;
 
 public class BettingScene extends SceneController {
 
-	@FXML
-	private Slider betSlider;
+	@FXML private Slider betSlider;
 	private int betSliderValue;
+	@FXML private Label maxBetLabel;
 	
 	@FXML
 	private Label betLabel;
@@ -29,14 +29,17 @@ public class BettingScene extends SceneController {
 		int min = 1;
 		betSliderValue = min;
 		betSlider.setMin(min);
-		betSlider.setMax(100);
+		int playerBalance = Player.getPlayerInstance().getBalance();
+		betSlider.setMax(playerBalance);
+		betSlider.setMajorTickUnit(playerBalance);
 		betSlider.setValue(betSliderValue);
+		maxBetLabel.setText(Integer.toString(playerBalance));
 	}
 	
 	@FXML
 	protected BlackjackScene switchToBlackjackScene() {
 		BlackjackScene blackjackScene = super.switchToBlackjackScene();
-		blackjackScene.setPlayerBetAmount(betSliderValue);
+		blackjackScene.setPlayer(Player.getPlayerInstance(), betSliderValue);
 		return null;
 	}
 	
