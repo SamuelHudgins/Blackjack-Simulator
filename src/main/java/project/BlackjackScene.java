@@ -13,6 +13,8 @@ import project.Routine.Conditional;
 
 public class BlackjackScene extends SceneController {
 
+	@FXML private Pane boardPane;
+	
 	@FXML private Button placeBetButton;	
 	@FXML private Button mainMenuButton;
 	@FXML private HBox matchHBox;	
@@ -59,27 +61,6 @@ public class BlackjackScene extends SceneController {
 	MatchResult matchResult;
 	
 	@FXML
-	private void initialize() {
-		placeBetButton.setVisible(false);
-		mainMenuButton.setVisible(false);
-		matchHBox.setVisible(true);
-		endMatchHBox.setVisible(false);
-		
-		deck = new Deck();
-		matchResultsLabel.setText("");
-		
-		playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
-		dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);
-		playerHand = new Hand(playerCardPane);
-		dealerHand = new Hand(dealerCardPane);
-		
-		hitButton.setVisible(false);
-		doubleBetButton.setVisible(false);
-		standButton.setVisible(false);
-		disperseCards();
-	}
-	
-	@FXML
 	protected BettingScene switchToBettingScene() {
 		super.switchToBettingScene();
 		return null;
@@ -89,6 +70,35 @@ public class BlackjackScene extends SceneController {
 	protected MainMenuScene switchToMainMenuScene() {
 		super.switchToMainMenuScene();
 		return null;
+	}
+	
+	@FXML
+	private void initialize() {
+		placeBetButton.setVisible(false);
+		mainMenuButton.setVisible(false);
+		matchHBox.setVisible(true);
+		endMatchHBox.setVisible(false);
+		matchResultsLabel.setText("");
+		playerHandLabel.setText("");
+		playerStatusLabel.setText("");
+		dealerHandLabel.setText("");
+		dealerStatusLabel.setText("");
+		hitButton.setVisible(false);
+		doubleBetButton.setVisible(false);
+		standButton.setVisible(false);
+	}
+	
+	public void setup() {		
+		deck = new Deck();		
+		playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
+		dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);
+		playerHand = GameObject.Instantiate("Hand.fxml");
+		playerHand.setParentPane(boardPane);
+		playerHand.setPosition(playerCardPane);
+		dealerHand = GameObject.Instantiate("Hand.fxml");
+		dealerHand.setParentPane(boardPane);
+		dealerHand.setPosition(dealerCardPane);
+		disperseCards();
 	}
 	
 	public void setPlayer(Player player, int betAmount) {

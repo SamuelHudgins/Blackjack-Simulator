@@ -16,7 +16,9 @@ public class Deck {
 		random = new Random();
 		for (String suit : cardSuits) {
 			for (String value : cardValues) {
-				availableCards.add(new Card(value, suit));
+				Card card = GameObject.Instantiate("Card.fxml");
+				card.setValueAndSuit(value, suit);
+				availableCards.add(card);
 			}
 		}
 	}

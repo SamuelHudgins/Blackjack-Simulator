@@ -1,61 +1,36 @@
 package project;
 
-import java.io.IOException;
-
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
-public class Hand {
+public class Hand implements IPlaceable {
 	
-	private GridPane cardPane;
+	@FXML private GridPane cardPane;
 	private Pane parent;
 	private final int MAX_HAND_SIZE = 11;
 	private int size;
 	private Card[] cards;
-		
-	public Hand() {
-		System.out.println(0);
-		System.out.println(cardPane);
-		cardPane.getChildren().forEach(image -> ((ImageView)image).setImage(null));
-	}
 	
-	public Hand(Pane pane) {
+	public Hand() {
 		size = 0;
 		cards = new Card[MAX_HAND_SIZE];
-		try {
-			cardPane = new FXMLLoader(getClass().getResource("Hand.fxml")).load();
-			cardPane.getChildren().forEach(image -> {
-				if (image instanceof ImageView) {
-					 ((ImageView) image).setImage(null);
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		parent = pane;
-		parent.getChildren().add(cardPane);
-	}
+	}	
 	
-	@FXML
-	private void initialize() {
-		System.out.println(1);
-		System.out.println(cardPane);
-		cardPane.getChildren().forEach(image -> ((ImageView)image).setImage(null));
+	public void setPosition(Node node) {
+		Point2D point = node.localToScene(0, 0);
+		cardPane.setLayoutX(point.getX());
+		cardPane.setLayoutY(point.getY());
 	}
 	
 	public void addCardToHand(Card card) {
 		if (size >= MAX_HAND_SIZE) return;	
 		cards[size] = card;
-		setCardImage(size, card.getImage());
+		card.displayCard();
+		cardPane.add(card.getCardImage(), size, 0);
 		size++;
-	}
-	
-	private void setCardImage(int index, Image image) {
-		((ImageView) cardPane.getChildren().get(index)).setImage(image);
 	}
 	
 	public int getSize() {
@@ -78,5 +53,19 @@ public class Hand {
 			value += card.getFaceValue();			
 		}
 		return value;
+	}
+	
+	// IPlaceable methods
+	public <T extends Pane> void setParentPane(T _parent) {
+		if (parent != null) {
+			parent.getChildren().remove(cardPane);
+		}
+		parent = _parent;
+		if (parent != null) parent.getChildren().add(cardPane);
+	}
+	
+	public void setPosition(double x, double y) {
+		cardPane.setLayoutX(x);
+		cardPane.setLayoutY(y);
 	}
 }

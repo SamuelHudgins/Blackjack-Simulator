@@ -17,6 +17,7 @@ public class MainApp extends Application {
 			SceneController.setStage(startStage);
 			startStage.setScene(scene);
 			startStage.setTitle("Blackjack Simulator");
+			startStage.setResizable(false);
 			startStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();

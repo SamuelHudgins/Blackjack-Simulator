@@ -42,6 +42,7 @@ public class BettingScene extends SceneController {
 	@FXML
 	protected BlackjackScene switchToBlackjackScene() {
 		BlackjackScene blackjackScene = super.switchToBlackjackScene();		
+		blackjackScene.setup();
 		blackjackScene.setPlayer(Player.getPlayerInstance(), betSliderValue);
 		return null;
 	}
