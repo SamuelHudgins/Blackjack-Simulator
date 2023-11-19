@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import project.Routine.Action;
 import project.Routine.Conditional;
@@ -31,13 +31,13 @@ public class BlackjackScene extends SceneController {
 	
 	private Hand playerHand;	
 	private HandDisplay playerHandDisplay;	
-	@FXML private StackPane playerCardStackPane;
+	@FXML private Pane playerCardPane;
 	@FXML private Label playerHandLabel;
 	@FXML private Label playerStatusLabel;
 	
 	private Hand dealerHand;	
 	private HandDisplay dealerHandDisplay;	
-	@FXML private StackPane dealerCardStackPane;
+	@FXML private Pane dealerCardPane;
 	@FXML private Label dealerHandLabel;
 	@FXML private Label dealerStatusLabel;
 	private final int DEALER_HIT_STOP = 17;
@@ -68,13 +68,10 @@ public class BlackjackScene extends SceneController {
 		deck = new Deck();
 		matchResultsLabel.setText("");
 		
-		// Set up player
-		playerHandDisplay = new HandDisplay(playerCardStackPane, playerHandLabel, playerStatusLabel);
-		playerHand = new Hand();
-		
-		// Set up dealer
-		dealerHandDisplay = new HandDisplay(dealerCardStackPane, dealerHandLabel, dealerStatusLabel);
-		dealerHand = new Hand();
+		playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
+		dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);
+		playerHand = new Hand(playerCardPane);
+		dealerHand = new Hand(dealerCardPane);
 		
 		hitButton.setVisible(false);
 		doubleBetButton.setVisible(false);
@@ -198,9 +195,6 @@ public class BlackjackScene extends SceneController {
 	}
 	
 	private void updateHandDisplay(HandDisplay handDisplay, Hand hand) {
-		for (int i = 0; i < hand.getSize(); i++) {
-			handDisplay.setCardImage(i, hand.getCards().get(i).getImage());
-		}
 		int handValue = hand.getHandValue();
 		handDisplay.setHandLabel(Integer.toString(handValue));		
 		if (handValue == 21) handDisplay.setStatusLabel("Blackjack!");
@@ -208,7 +202,7 @@ public class BlackjackScene extends SceneController {
 	}
 	
 	private void revealDealerCard() {
-		dealerHand.getCards().get(0).setFaceDown(false);
+		dealerHand.getCards()[0].setFaceDown(false);
 		updateHandDisplay(dealerHandDisplay, dealerHand);
 	}
 	

@@ -7,11 +7,12 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BlackjackScene">
@@ -74,132 +75,8 @@
                         <Font size="43.0" />
                      </font>
                   </Label>
-                  <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="50.0" orientation="VERTICAL" prefHeight="180.0" prefWidth="446.0" GridPane.columnIndex="1" GridPane.halignment="LEFT">
-                     <children>
-                        <StackPane fx:id="dealerCardStackPane" alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="357.0">
-                           <children>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="25.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="50.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="75.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="100.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="125.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="150.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="175.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="200.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="225.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="250.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </StackPane>
-                     </children>
-                  </FlowPane>
-                  <FlowPane alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="50.0" orientation="VERTICAL" prefHeight="180.0" prefWidth="446.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
-                     <children>
-                        <StackPane fx:id="playerCardStackPane" alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="357.0">
-                           <children>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="25.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="50.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="75.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="100.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="125.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="150.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="175.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="200.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="225.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="250.0">
-                                 <image>
-                                    <Image url="@../images/A-S.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </StackPane>
-                     </children>
-                  </FlowPane>
+                  <Pane fx:id="dealerCardPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
+                  <Pane fx:id="playerCardPane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
                <StackPane.margin>
                   <Insets bottom="150.0" left="200.0" right="200.0" top="50.0" />
@@ -253,5 +130,43 @@
             </HBox>
          </children>
       </StackPane>
+      <HBox layoutX="821.0" layoutY="428.0" prefHeight="100.0" prefWidth="200.0" visible="false">
+         <children>
+            <VBox>
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="128.0" text="Label" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="17.0" prefWidth="128.0" text="Label" textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
+                  </Label>
+                  <StackPane alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="134.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/A-S.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" translateX="25.0">
+                           <image>
+                              <Image url="@../images/A-S.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
