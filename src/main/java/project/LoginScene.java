@@ -15,4 +15,10 @@ public class LoginScene extends SceneController {
 		super.switchToRegistrationScene();
 		return null;
 	}
+	
+	@FXML
+	protected DeleteScene switchToDeleteScene() {
+		super.switchToDeleteScene();
+		return null;
+	}
 }

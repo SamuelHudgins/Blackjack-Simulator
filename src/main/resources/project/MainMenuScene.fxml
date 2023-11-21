@@ -2,15 +2,75 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MainMenuScene">
+<StackPane alignment="TOP_RIGHT" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MainMenuScene">
    <children>
-      <Label layoutX="252.0" layoutY="14.0" text="Main Menu Scene" textAlignment="CENTER" />
-      <Button layoutX="254.0" layoutY="135.0" mnemonicParsing="false" onAction="#switchToBettingScene" text="Betting Scene" textAlignment="CENTER" />
-      <Button layoutX="254.0" layoutY="161.0" mnemonicParsing="false" onAction="#switchToTutorialScene" text="Tutorial Scene" textAlignment="CENTER" />
-      <Button layoutX="261.0" layoutY="213.0" mnemonicParsing="false" onAction="#switchToStatsScene" text="Stats Scene" textAlignment="CENTER" />
-      <Button layoutX="265.0" layoutY="239.0" mnemonicParsing="false" onAction="#exitGame" text="Exit Game" textAlignment="CENTER" />
-      <Button layoutX="260.0" layoutY="187.0" mnemonicParsing="false" onAction="#switchToLoginScene" text="Login Scene" textAlignment="CENTER" />
+      <ImageView fitHeight="650.0" fitWidth="1200.0" pickOnBounds="true">
+         <image>
+            <Image url="@/images/Green_Felt.png" />
+         </image>
+      </ImageView>
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="339.0" prefWidth="212.0" StackPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="555.0" prefWidth="341.0" spacing="25.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <Label alignment="CENTER" prefHeight="53.0" prefWidth="351.0" text="BLACKJACK" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="0.0" prefWidth="341.0" text="SIMULATOR" textFill="WHITE">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" fillWidth="false" prefHeight="427.0" prefWidth="270.0" spacing="15.0" style="-fx-background-color: rgba(0, 0, 0, 0.75);">
+                     <children>
+                        <Label text="Main Menu" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#switchToBettingScene" prefWidth="200.0" text="Play Blackjack" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#switchToTutorialScene" prefWidth="200.0" text="Tutorial" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#switchToStatsScene" prefWidth="200.0" text="View Stats" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#switchToLoginScene" prefWidth="200.0" text="Login" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#exitGame" prefWidth="200.0" text="Exit" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
    </children>
-</AnchorPane>
+</StackPane>
