@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Deck {
-	private String[] cardValues = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}; 
+	private String[] cardValues = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 	private String[] cardSuits = {"C", "D", "H", "S"};
 	private ArrayList<Card> availableCards;
 	private ArrayList<Card> removedCards;

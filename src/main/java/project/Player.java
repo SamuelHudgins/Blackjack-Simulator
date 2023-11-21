@@ -1,22 +1,30 @@
 package project;
 
+
 public class Player {
-	public static Player instance;
+	private static Player instance;
 	private String username;
 	private int balance;
+	private int bet;
 	
-	public static void setPlayerInstance(String username) {
-		if (instance != null) return;
-		instance = new Player(username);
-	}
-	
-	public static Player getPlayerInstance() {
-		return instance;
-	}
-	
-	public Player(String username) {
+	private Player(String username, int balance) {
 		this.username = username;
 		this.balance = 1000;
+		bet = 0;
+	}
+	
+	public static void setInstance(String username, int balance) {
+		if (instance != null) {
+			instance.username = username;
+			instance.balance = balance;
+			return;
+		}
+		instance = new Player(username, balance);
+	}
+	
+	public static Player getInstance() {
+		if (instance == null) throw new NullPlayerException();
+		return instance;
 	}
 	
 	public String getUsername() {
@@ -33,5 +41,13 @@ public class Player {
 
 	public void adjustBalance(int amount) {
 		balance += amount;
+	}
+	
+	public int getBet() {
+		return bet;
+	}
+	
+	public void setBet(int amount) {
+		bet = amount;
 	}
 }

@@ -25,7 +25,7 @@ public class MainApp extends Application {
 	}
 
 	public static void main(String[] args) {
-		Player.setPlayerInstance("Player");
+		Player.setInstance("Player", 1000);
 		launch(args);	
 	}
 

@@ -31,7 +31,7 @@ public class BettingScene extends SceneController {
 		int min = 1;
 		betSliderValue = min;
 		betSlider.setMin(min);
-		playerBalance = Player.getPlayerInstance().getBalance();
+		playerBalance = Player.getInstance().getBalance();
 		bankLabel.setText("Bank: $" + Integer.toString(playerBalance));
 		betSlider.setMax(playerBalance);
 		betSlider.setMajorTickUnit(playerBalance);
@@ -41,9 +41,9 @@ public class BettingScene extends SceneController {
 	
 	@FXML
 	protected BlackjackScene switchToBlackjackScene() {
-		BlackjackScene blackjackScene = super.switchToBlackjackScene();		
-		blackjackScene.setup();
-		blackjackScene.setPlayer(Player.getPlayerInstance(), betSliderValue);
+		Player.getInstance().adjustBalance(-betSliderValue);
+		Player.getInstance().setBet(betSliderValue);
+		super.switchToBlackjackScene().setup();
 		return null;
 	}
 	
