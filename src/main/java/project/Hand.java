@@ -1,5 +1,7 @@
 package project;
 
+import java.util.ArrayList;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -11,12 +13,12 @@ public class Hand implements IPlaceable {
 	@FXML private GridPane cardPane;
 	private Pane parent;
 	private final int MAX_HAND_SIZE = 11;
-	private int size;
-	private Card[] cards;
+	private ArrayList<Card> cards;
+	private boolean finished;
+	private int bet;
 	
 	public Hand() {
-		size = 0;
-		cards = new Card[MAX_HAND_SIZE];
+		cards = new ArrayList<Card>(MAX_HAND_SIZE);
 	}	
 	
 	public void setPosition(Node node) {
@@ -26,18 +28,24 @@ public class Hand implements IPlaceable {
 	}
 	
 	public void addCardToHand(Card card) {
-		if (size >= MAX_HAND_SIZE) return;	
-		cards[size] = card;
+		if (cards.size() >= MAX_HAND_SIZE) return;	
+		cards.add(card);
 		card.displayCard();
-		cardPane.add(card.getCardImage(), size, 0);
-		size++;
+		cardPane.add(card.getCardImage(), cards.size(), 0);
+	}
+	
+	public void removeCardFromHand(Card card) {
+		if (cards.contains(card)) {
+			cardPane.getChildren().remove(cards.indexOf(card));
+			cards.remove(card);
+		}
 	}
 	
 	public int getSize() {
-		return size;
+		return cards.size();
 	}
 	
-	public Card[] getCards() {
+	public ArrayList<Card> getCards() {
 		return cards;
 	}
 	
@@ -53,6 +61,32 @@ public class Hand implements IPlaceable {
 			value += card.getFaceValue();			
 		}
 		return value;
+	}
+	
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
+	
+	public boolean getFinished() {
+		return finished;
+	}
+	
+	public void setBet(int bet) {
+		this.bet = bet;
+	}
+	
+	public int getBet() {
+		return bet;
+	}
+	
+	public void setSplitScale() {
+		cardPane.setScaleX(0.6);
+		cardPane.setScaleY(0.6);
+	}
+	
+	public void resetScale() {
+		cardPane.setScaleX(1);
+		cardPane.setScaleY(1);
 	}
 	
 	// IPlaceable methods

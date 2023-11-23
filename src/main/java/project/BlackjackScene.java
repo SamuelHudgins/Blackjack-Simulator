@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 public class BlackjackScene extends SceneController {
 
 	@FXML private Pane boardPane;
+	@FXML private Pane removedCardPane;
 	
 	@FXML private Button placeBetButton;	
 	@FXML private Button mainMenuButton;
@@ -21,8 +22,14 @@ public class BlackjackScene extends SceneController {
 	@FXML private Button hitButton;	
 	@FXML private Button doubleBetButton;	
 	@FXML private Button standButton;	
+	@FXML private Button splitButton;	
+	@FXML private Button insuranceButton;	
+	@FXML private Button evenMoneyButton;	
 	
 	@FXML private Pane playerCardPane;
+	@FXML private Pane playerSplitPane1;
+	@FXML private Pane playerSplitPane2;
+	@FXML private Pane playerSplitPane3;
 	@FXML private Label playerHandLabel;
 	@FXML private Label playerStatusLabel;
 	
@@ -30,12 +37,17 @@ public class BlackjackScene extends SceneController {
 	@FXML private Label dealerHandLabel;
 	@FXML private Label dealerStatusLabel;
 	
+	@FXML private Label insuranceLostLabel;
 	@FXML private Label matchResultsLabel;
 	
 	private BlackjackMatch blackjackMatch;
-	
+		
 	public Label getMatchResultsLabel() {
 		return matchResultsLabel;
+	}
+	
+	public Pane getRemovedCardPane() {
+		return removedCardPane;
 	}
 	
 	@FXML
@@ -57,6 +69,7 @@ public class BlackjackScene extends SceneController {
 		matchHBox.setVisible(true);
 		endMatchHBox.setVisible(false);
 		matchResultsLabel.setText("");
+		insuranceLostLabel.setVisible(false);
 		playerHandLabel.setText("");
 		playerStatusLabel.setText("");
 		dealerHandLabel.setText("");
@@ -64,6 +77,9 @@ public class BlackjackScene extends SceneController {
 		hitButton.setVisible(false);
 		doubleBetButton.setVisible(false);
 		standButton.setVisible(false);
+		splitButton.setVisible(false);
+		insuranceButton.setVisible(false);
+		evenMoneyButton.setVisible(false);
 	}
 	
 	public void setup() {
@@ -71,40 +87,84 @@ public class BlackjackScene extends SceneController {
 		playerBankLabel.setText("Bank: $" + (player.getBalance()));
 		playerBetLabel.setText("Bet: $" + Integer.toString(player.getBet()));
 		HandDisplay playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
-		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);
+		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);		
 		blackjackMatch = new BlackjackMatch(this, playerHandDisplay, dealerHandDisplay);
-		blackjackMatch.start(boardPane, playerCardPane, dealerCardPane);
+		Pane [] playerCardPanes = new Pane[] { playerCardPane, playerSplitPane1, playerSplitPane2, playerSplitPane3 };
+		blackjackMatch.start(boardPane, playerCardPanes, dealerCardPane);
 	}
 	
-	public void showMatchOptions(boolean canDouble) {
+	public void showMatchOptions(boolean canDouble, boolean canSplit, boolean allowInsurance, boolean allowEvenMoney) {
 		hitButton.setVisible(true);
 		doubleBetButton.setVisible(canDouble);
 		standButton.setVisible(true);
+		splitButton.setVisible(canSplit);
+		if (allowEvenMoney) evenMoneyButton.setVisible(true);
+		else if (allowInsurance) insuranceButton.setVisible(true);
 	}
 	
 	public void hideMatchOptions() {
 		hitButton.setVisible(false);
 		doubleBetButton.setVisible(false);
 		standButton.setVisible(false);
+		splitButton.setVisible(false);
+		insuranceButton.setVisible(false);
+		evenMoneyButton.setVisible(false);
+	}
+	
+	public void hideInsuranceOptions() {
+		insuranceButton.setVisible(false);
+		evenMoneyButton.setVisible(false);
+	}
+	
+	public void showSplitButton(boolean canSplit) {
+		splitButton.setVisible(canSplit);
 	}
 	
 	@FXML
 	private void onHitButtonPressed() {
 		doubleBetButton.setVisible(false);
+		hideInsuranceOptions();
 		blackjackMatch.playerHit();
 	}
 	
 	@FXML
 	private void onDoubleButtonPressed() {
+		doubleBetButton.setVisible(false);
+		hideInsuranceOptions();
 		blackjackMatch.doublePlayerBet();
 	}
 	
 	@FXML
 	private void onStandButtonPressed() {
-		hitButton.setVisible(false);
-		doubleBetButton.setVisible(false);
-		standButton.setVisible(false);
 		blackjackMatch.playerStand();
+	}
+	
+	@FXML
+	private void onSplitButtonPressed() {
+		splitButton.setVisible(false);
+		blackjackMatch.playerSplit();
+	}
+	
+	@FXML
+	private void oninsuranceButtonPressed() {
+		insuranceButton.setVisible(false);
+		matchHBox.setVisible(false);
+		blackjackMatch.useInsurance();
+	}
+	
+	@FXML
+	private void onEvenMoneyButtonPressed() {
+		evenMoneyButton.setVisible(false);
+		matchHBox.setVisible(false);
+		blackjackMatch.useInsurance();
+	}
+	
+	public void showInusuranceLost() {
+		insuranceLostLabel.setVisible(true);
+		Routine.doAfter(() -> { 
+			insuranceLostLabel.setVisible(false); 
+			matchHBox.setVisible(true);
+		}, 2000);
 	}
 	
 	public void setPlayerBankLabel(String text) {
@@ -115,7 +175,7 @@ public class BlackjackScene extends SceneController {
 		playerBetLabel.setText("Bet: $" + text);
 	}
 	
-	public void showEndMatchResult(String matchResult) {
+	public void setMatchResultText(String matchResult) {
 		matchResultsLabel.setText(matchResult);
 	}
 	

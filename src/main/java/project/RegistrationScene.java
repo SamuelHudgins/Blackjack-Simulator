@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 
 public class RegistrationScene extends SceneController {
 	
+	// Scene control methods
 	@FXML
 	protected MainMenuScene switchToMainMenuScene() {
 		super.switchToMainMenuScene();
