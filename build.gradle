@@ -6,21 +6,24 @@ plugins {
 	id 'application'
 	id 'eclipse'
 	id 'org.openjfx.javafxplugin' version '0.1.0'
-	id 'org.beryx.jlink' version '2.12.0'
+	id "org.beryx.jlink" version "3.0.1"
 }
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
-    
+dependencies {    
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
 	implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.44.0.0'
-    
+	
+	// https://mvnrepository.com/artifact/org.slf4j/slf4j-nop
+	implementation 'org.slf4j:slf4j-nop:2.0.9'
+
+}
+
+application {
+    mainClass = 'project.Launcher'
 }
 
 javafx {
@@ -28,7 +31,7 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-mainClassName = "project.MainApp"
+mainClassName = "project.Launcher"
 
 eclipse {
     classpath {

@@ -46,7 +46,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField />
+                        <TextField fx:id="usernameField" />
                      </children>
                   </VBox>
                   <VBox layoutX="43.0" layoutY="86.0" prefHeight="1.0" prefWidth="386.0">
@@ -56,16 +56,16 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField />
+                        <PasswordField fx:id="passwordField" />
                      </children>
                   </VBox>
                   <VBox alignment="CENTER" spacing="25.0">
                      <children>
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Incorrect username or password" visible="false" />
+                        <Text fx:id="errorLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Incorrect username or password" />
                         <HBox alignment="CENTER" prefHeight="36.0" prefWidth="453.0" spacing="10.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Sign In" />
-                              <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Play as Guest" />
+                              <Button mnemonicParsing="false" onAction="#onLoginButtonPressed" text="Sign In" />
+                              <Button mnemonicParsing="false" onAction="#onGuestLoginButtonPressed" text="Play as Guest" />
                               <Button layoutX="55.0" layoutY="10.0" mnemonicParsing="false" onAction="#switchToRegistrationScene" text="Create Account" />
                               <Button layoutX="221.0" layoutY="10.0" mnemonicParsing="false" onAction="#switchToDeleteScene" text="Delete Account" />
                            </children>

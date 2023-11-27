@@ -46,8 +46,8 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField />
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a username" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
+                        <TextField fx:id="usernameField" />
+                        <Text fx:id="usernameErrorLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Error text" textAlignment="RIGHT" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
                   <VBox layoutX="43.0" layoutY="86.0" prefHeight="1.0" prefWidth="386.0">
@@ -57,8 +57,8 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField />
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a password" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
+                        <PasswordField fx:id="passwordField" />
+                        <Text fx:id="passwordErrorLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Error text" textAlignment="RIGHT" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
                   <VBox layoutX="43.0" layoutY="139.0" prefHeight="1.0" prefWidth="386.0">
@@ -68,13 +68,13 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField />
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="The passwords do not match" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
+                        <PasswordField fx:id="confirmPasswordField" />
+                        <Text fx:id="confirmPasswordErrorLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Error text" textAlignment="RIGHT" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
                   <HBox alignment="CENTER" prefHeight="35.0" prefWidth="271.0" spacing="50.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Submit">
+                        <Button mnemonicParsing="false" onAction="#onSubmitButtonPressed" text="Submit">
                            <font>
                               <Font size="16.0" />
                            </font>

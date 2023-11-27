@@ -21,9 +21,9 @@
             <Image url="@/images/Green_Felt.png" />
          </image>
       </ImageView>
-      <Pane prefHeight="540.0" prefWidth="449.0" style="-fx-background-color: #000000; -fx-opacity: 75%;" StackPane.alignment="CENTER">
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="508.0" prefWidth="450.0" style="-fx-background-color: #000000; -fx-opacity: 75%;" StackPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" fillWidth="false" prefHeight="299.0" prefWidth="451.0" spacing="25.0">
+            <VBox alignment="CENTER" fillWidth="false" prefHeight="470.0" prefWidth="451.0" spacing="20.0">
                <children>
                   <VBox alignment="CENTER" prefHeight="52.0" prefWidth="389.0">
                      <children>
@@ -46,7 +46,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TextField />
+                        <TextField fx:id="usernameField" />
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a username" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
@@ -57,7 +57,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField />
+                        <PasswordField fx:id="passwordField" />
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter a password" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
@@ -68,24 +68,33 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <PasswordField />
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter &quot;delete&quot;" textAlignment="RIGHT" visible="false" wrappingWidth="385.69235610961914" />
+                        <TextField fx:id="deleteField" />
+                        <Text fx:id="deleteErrorText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter &quot;delete&quot;" textAlignment="RIGHT" wrappingWidth="385.69235610961914" />
                      </children>
                   </VBox>
-                  <HBox alignment="CENTER" spacing="25.0">
+                  <VBox spacing="20.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Submit">
+                        <Label fx:id="errorLabel" text="Incorrect username or password." textAlignment="CENTER" textFill="WHITE">
                            <font>
-                              <Font size="16.0" />
+                              <Font size="15.0" />
                            </font>
-                        </Button>
-                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#switchToLoginScene" text="Login">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Button>
+                        </Label>
+                        <HBox alignment="CENTER" spacing="25.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onSubmitButtonPressed" text="Submit">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#switchToLoginScene" text="Login">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
+                  </VBox>
                </children>
                <padding>
                   <Insets top="25.0" />
@@ -93,7 +102,7 @@
             </VBox>
          </children>
          <StackPane.margin>
-            <Insets bottom="90.0" left="375.0" right="375.0" top="90.0" />
+            <Insets />
          </StackPane.margin>
       </Pane>
    </children>

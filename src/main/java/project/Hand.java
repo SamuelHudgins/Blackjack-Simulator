@@ -15,7 +15,7 @@ public class Hand implements IPlaceable {
 	private final int MAX_HAND_SIZE = 11;
 	private ArrayList<Card> cards;
 	private boolean finished;
-	private int bet;
+	private double bet;
 	
 	public Hand() {
 		cards = new ArrayList<Card>(MAX_HAND_SIZE);
@@ -63,6 +63,14 @@ public class Hand implements IPlaceable {
 		return value;
 	}
 	
+	public boolean hasNaturalBlackjack() {
+		return getHandValue() == 21 && getSize() == 2;
+	}
+	
+	public boolean busted() {
+		return getHandValue() > 21;
+	}
+	
 	public void setFinished(boolean finished) {
 		this.finished = finished;
 	}
@@ -71,11 +79,11 @@ public class Hand implements IPlaceable {
 		return finished;
 	}
 	
-	public void setBet(int bet) {
+	public void setBet(double bet) {
 		this.bet = bet;
 	}
 	
-	public int getBet() {
+	public double getBet() {
 		return bet;
 	}
 	

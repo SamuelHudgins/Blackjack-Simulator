@@ -14,7 +14,7 @@ public class Deck {
 		availableCards = new ArrayList<Card>();
 		removedCards = new ArrayList<Card>();
 		random = new Random();
-
+		
 		for (String suit : cardSuits) {
 			for (String value : cardValues) {
 				Card card = GameObject.Instantiate("Card.fxml");

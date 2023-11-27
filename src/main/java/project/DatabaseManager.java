@@ -1,188 +1,335 @@
 package project;
 
 import java.sql.*;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 
-/**
- * <p>The object used for creating and managing a SQLite database. 
- * This class focuses on managing a single table per {@code DBTable} 
- * instance, so the available methods operate on a single table.
- */
 public class DatabaseManager {
 
-	private final String DEFAULT_URL;
+	private static DatabaseManager instance;
+	private static final String DEFAULT_URL = String.format("jdbc:sqlite:");
+	private static final String DATABASE_NAME = "User Data";
 	private Connection connection;
-	private final String TABLE_NAME;
-	private static enum Columns {
-		Username,
-		Password,
-		Rank,
-		Wins,
-		Losses;
-	}
 	
-	/**
-	 * <p>Attempts to establish a connection to the given database and creates 
-	 * a new table. This should also create a new database file in the current 
-	 * directory the application is running in, where the new table resides.
-	 * @param tableName the name of the new table and resulting file.
-     */
-	public DatabaseManager(String tableName) {
-		TABLE_NAME = tableName;
-		DEFAULT_URL = String.format("jdbc:sqlite:%s.db", TABLE_NAME);
-		try {
-			connection = DriverManager.getConnection(DEFAULT_URL);
-			String sql = MessageFormat.format(""
-					+ "CREATE TABLE IF NOT EXISTS {0} ("
-						+ "{1} TEXT NOT NULL UNIQUE, "
-						+ "{2} TEXT NOT NULL, "
-						+ "{3} TEXT, "
-						+ "{4} INTEGER, "
-						+ "{5} INTEGER"
-					+ ")", TABLE_NAME, Columns.Username, Columns.Password, 
-					Columns.Rank, Columns.Wins, Columns.Losses);
-			try {
-				Statement stmt = connection.createStatement();
-				stmt.execute(sql);
-				stmt.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
+	// Table names
+	public final String USERS = "Users";	
+	public final String BANKS = "Banks";	
+	public final String WINS = "Wins";	
+	public final String LOSSES = "Losses";
+	
+	public static DatabaseManager getInstance() {
+		if (instance == null) {
+			instance = new DatabaseManager(DATABASE_NAME);			
 		}
+		return instance;
 	}
 	
-	/**
-     * <p>Releases this Connection object's database and JDBC resources 
-     * immediately instead of waiting for them to be automatically released. 
-     */
-	public void closeConnection() {
+	private DatabaseManager(String databaseName) {
 		try {
-			connection.close();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-	}
-	
-	public void deleteTable() {
-		String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
-		try {
+			connection = DriverManager.getConnection(DEFAULT_URL + DATABASE_NAME + ".db");
+			String sql = "PRAGMA foreign_keys = ON";
 			Statement stmt = connection.createStatement();
 			stmt.execute(sql);
 			stmt.close();
+			
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public ResultSet getRecord(String username) {
-		String sql = MessageFormat.format("SELECT * FROM {0} WHERE {1} is \"{2}\"",
-				TABLE_NAME, Columns.Username, username);
-		try {
-			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			return rs;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}		
-	}
-	
-	public ResultSet getAllRecords() {
-		String sql = MessageFormat.format("SELECT * FROM {0}", TABLE_NAME);
-		try {
-			Statement stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			return rs;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
+			System.err.println(e.getMessage());
 		}
 	}
 	
-	private boolean recordExist(String username) {
-		try (ResultSet rs = getRecord(username);) {
-			if (rs.getObject(1) != null) {
-				return true;
+	private boolean createTable(String tableName, String createSQL) {
+//		String sql = MessageFormat.format("SELECT name FROM sqlite_master WHERE type=\"table\" AND name=\"{0}\"", tableName);
+		String sql = "SELECT name FROM sqlite_master WHERE type=\"table\" AND name=\"%s\"".formatted(tableName);
+		try {
+			Statement test = connection.createStatement();
+			ResultSet rs  = test.executeQuery(sql);
+			if (rs.next()) {  // The table already exists			
+				test.close();
+				return false;
+			}
+			Statement stmt = connection.createStatement();
+			stmt.execute(createSQL);
+			stmt.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}	
+	}
+	
+	public void createUsersTable() {
+		String sql = "CREATE TABLE \"Users\" ("
+					+ "	\"ID\"			INTEGER NOT NULL, "
+					+ "	\"Username\"	TEXT NOT NULL, "
+					+ "	\"Password\"	TEXT NOT NULL, "
+					+ "	PRIMARY KEY(\"ID\" AUTOINCREMENT) "
+					+ ");";
+		createTable(USERS, sql);
+	}
+	
+	public void createBanksTable() {
+		String sql = "CREATE TABLE \"Banks\" ("
+					+ "	\"ID\"			INTEGER, "
+					+ "	\"User_ID\"		INTEGER, "
+					+ "	\"Balance\"		REAL, "
+					+ "	FOREIGN KEY(\"User_ID\") REFERENCES \"Users\"(\"ID\") ON DELETE CASCADE, "
+					+ "	PRIMARY KEY(\"ID\" AUTOINCREMENT) "
+					+ ");";
+		createTable(BANKS, sql);
+	}
+	
+	public void createWinsTable() {
+		String sql = "CREATE TABLE \"Wins\" ("
+				+ "	\"User_ID\"		INTEGER, "
+				+ "	\"Amount\"		REAL NOT NULL, "
+				+ "	FOREIGN KEY(\"User_ID\") REFERENCES \"Users\"(\"ID\") ON DELETE CASCADE "
+				+ ");";
+		createTable(WINS, sql);
+	}
+	
+	public void createLossesTable() {
+		String sql = "CREATE TABLE \"Losses\" ("
+					+ "	\"User_ID\"		INTEGER, "
+					+ "	\"Amount\"		REAL NOT NULL, "
+					+ "	FOREIGN KEY(\"User_ID\") REFERENCES \"Users\"(\"ID\") ON DELETE CASCADE "
+					+ ");";
+		createTable(LOSSES, sql);
+	}
+	
+	public boolean usernameExist(String username) {
+		String sql = "SELECT EXISTS (SELECT 1 FROM Users WHERE Username = ?);";				
+		try {
+			// Use prepared statements to prevent SQL injection attacks from client-supplied data
+			// 	(https://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html). 
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, username);
+		 	ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				// If the result is 1, then a matching record was located, and this method will return true.
+				return rs.getInt(1) == 1;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
-	public boolean insertUser(String userName, String password) {		
-		if (recordExist(userName)) {
-			System.out.println("The user \'" + userName + "\' is already in the database.");
-			return false;
-		}
-		String sql = MessageFormat.format("INSERT INTO {0} ({1}, {2}) VALUES (?, ?)", 
-				TABLE_NAME, Columns.Username, Columns.Password);
+
+	public boolean insertUser(String userName, String password) {
+		if (usernameExist(userName)) return false;
+
+		String sql = "INSERT INTO Users (Username, Password) VALUES (?, ?);";
 		try {
-			PreparedStatement stmt = connection.prepareStatement(sql);
-			stmt.setString(1, userName);
-			stmt.setString(2, password);
-			stmt.executeUpdate();
-			stmt.close();
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, userName);
+			pstmt.setString(2, password);
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
-		}		
+		}
 		return true;
 	}
 	
-	public void updateUserRank(String userName, String value) {
-		updateUser(userName, Columns.Rank, value);	
+	private int getUserID(String userName) {
+		if (!usernameExist(userName)) return -1;
+
+		String sql = "SELECT ID FROM Users WHERE Username = ?";
+		try {			
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, userName);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		return -1;
 	}
 	
-	public void updateUserWins(String userName, int value) {
-		updateUser(userName, Columns.Wins, value);	
+	public String getUserPassword(String userName) {
+		if (!usernameExist(userName)) return null;
+		
+		String sql = "SELECT Password FROM Users WHERE Username = ?";
+		try {			
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, userName);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return rs.getString(1);
+			}			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
 	}
 	
-	public void updateUserLosses(String userName, int value) {
-		updateUser(userName, Columns.Losses, value);	
+	public Double getUserBankBalance(String userName) {
+		int userID = getUserID(userName);
+		if (userID == -1) return -1.0;
+
+		String sql = "SELECT Balance FROM BANKS WHERE User_ID = " + userID;
+		try {			
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getDouble(1);
+			}			
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1.0;
+		}
+		return -1.0;
 	}
 	
-	private <T> void updateUser(String userName, Columns column, T value) {
-		String sql = MessageFormat.format("UPDATE {0} SET {1} = \"{2}\" WHERE {3} = \"{4}\"", 
-				TABLE_NAME, column, value, Columns.Username, userName);
-		try {
+	public void setUserBankBalance(String userName, Double amount) {
+		int userID = getUserID(userName);
+		if (userID == -1) return;
+
+		String sql = "UPDATE Banks SET Balance = " + amount + " WHERE User_ID = " + userID;
+		try {			
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}		
-	}
-	
-	public boolean deleteUser(String userName) {
-		if (!recordExist(userName)) {
-			System.out.println("The user \'" + userName + "\' is not in the database.");
-			return false;
 		}
-		String sql = MessageFormat.format("DELETE FROM {0} WHERE {1} = \"{2}\"", 
-				TABLE_NAME, Columns.Username, userName);
-		try {
+	}
+
+	public boolean insertBank(String userName, Double amount) {		
+		int userID = getUserID(userName);
+		if (userID == -1) return false;
+
+		String sql = "INSERT INTO Banks (User_ID, Balance) VALUES (" + userID + ", " + amount + ")";
+		try {			
 			Statement stmt = connection.createStatement();
-			stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql);			
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
-		}	
+		}
 		return true;
 	}
 	
-	public static void displayResultSet(ResultSet rs) {
+	public boolean insertWinnings(String userName, Double amount) {		
+		int userID = getUserID(userName);
+		if (userID == -1) return false;
+
+		String sql = "INSERT INTO Wins (User_ID, Amount) VALUES (" + userID + ", ?)";
+		try {			
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setDouble(1, amount);
+			pstmt.executeUpdate();			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean insertLosses(String userName, Double amount) {		
+		int userID = getUserID(userName);
+		if (userID == -1) return false;
+
+		String sql = "INSERT INTO Losses (User_ID, Amount) VALUES (" + userID + ", ?)";
+		try {			
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setDouble(1, amount);
+			pstmt.executeUpdate();			
+			pstmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean removeUser(String userName) {
+		if (!usernameExist(userName)) return false;
+
+		String sql = "DELETE FROM Users WHERE Username = ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, userName);
+			pstmt.executeUpdate();			
+			pstmt.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public ArrayList<UserStat> getAllUsersStats() {
+		String sql = ("SELECT "
+						+ "ROW_NUMBER() OVER(ORDER BY Balance DESC) AS Rank, "
+						+ "Username, "
+						+ "Banks.Balance, "
+						+ "(SELECT ifnull(sum(Amount), 0) FROM Wins WHERE Wins.User_ID = Users.ID) AS winnings, "
+						+ "(SELECT ifnull(sum(Amount), 0) FROM Losses WHERE Losses.User_ID = Users.ID) AS loss "
+					+ "FROM "
+						+ "Users "
+						+ "LEFT JOIN Banks ON Banks.User_ID = Users.ID");
+		try {
+			Statement stmt = connection.createStatement();
+			ResultSet rs  = stmt.executeQuery(sql);
+			return resultSetToUserStatList(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private ArrayList<UserStat> resultSetToUserStatList(ResultSet rs) {
+		if (rs == null) return null;
+		
+		ArrayList<UserStat> stats = new ArrayList<UserStat>();
 		try {
 			ResultSetMetaData rsmd = rs.getMetaData();
-			while (rs.next()) {
-				for (int i = 1; i <= rsmd.getColumnCount(); i++)
-					System.out.print(rsmd.getColumnName(i) + "[" + rs.getObject(rsmd.getColumnName(i)) + "]"
-							+ (rs.getObject(rsmd.getColumnName(i)) != null ? "(" + rs.getObject(rsmd.getColumnName(i)).getClass().getSimpleName() + ") " : " "));
-				System.out.println();
-			}
+				while (rs.next()) {
+					String rank = String.valueOf(rs.getObject(rsmd.getColumnName(1)));
+					String name = String.valueOf(rs.getObject(rsmd.getColumnName(2)));
+					String balance = String.valueOf(rs.getObject(rsmd.getColumnName(3)));
+					String winnings = String.valueOf(rs.getObject(rsmd.getColumnName(4)));
+					String losses = String.valueOf(rs.getObject(rsmd.getColumnName(5)));
+					UserStat userStat = new UserStat(rank, name, balance, winnings, losses);
+					stats.add(userStat);
+				}
+				return stats;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public void resetUserStats(String userName, Double bankAmount) {
+		int userID = getUserID(userName);
+		if (userID == -1) return;
+
+		String deleteWins = "DELETE FROM Wins WHERE User_ID = " + userID;
+		String deleteLosses = "DELETE FROM Losses WHERE User_ID = " + userID;
+		String updateBank = "UPDATE Banks SET Balance = " + bankAmount + " WHERE User_ID = " + userID;
+		
+		try {
+			Statement stmt = connection.createStatement();
+			stmt.execute(deleteWins);
+			stmt.execute(deleteLosses);
+			stmt.execute(updateBank);
+			stmt.close();			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void closeConnection() {
+		try {
+			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

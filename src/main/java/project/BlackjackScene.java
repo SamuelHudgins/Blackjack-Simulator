@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public class BlackjackScene extends SceneController {
 
@@ -41,14 +42,11 @@ public class BlackjackScene extends SceneController {
 	@FXML private Label matchResultsLabel;
 	
 	private BlackjackMatch blackjackMatch;
-		
-	public Label getMatchResultsLabel() {
-		return matchResultsLabel;
-	}
 	
-	public Pane getRemovedCardPane() {
-		return removedCardPane;
-	}
+	@FXML private StackPane gameOverPane;
+	@FXML private Label gameOverText;
+
+	// Scene control methods
 	
 	@FXML
 	protected BettingScene switchToBettingScene() {
@@ -60,6 +58,14 @@ public class BlackjackScene extends SceneController {
 	protected MainMenuScene switchToMainMenuScene() {
 		super.switchToMainMenuScene();
 		return null;
+	}
+	
+	public Label getMatchResultsLabel() {
+		return matchResultsLabel;
+	}
+	
+	public Pane getRemovedCardPane() {
+		return removedCardPane;
 	}
 	
 	@FXML
@@ -85,7 +91,7 @@ public class BlackjackScene extends SceneController {
 	public void setup() {
 		Player player = Player.getInstance();
 		playerBankLabel.setText("Bank: $" + (player.getBalance()));
-		playerBetLabel.setText("Bet: $" + Integer.toString(player.getBet()));
+		playerBetLabel.setText("Bet: $" + Double.toString(player.getBet()));
 		HandDisplay playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
 		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);		
 		blackjackMatch = new BlackjackMatch(this, playerHandDisplay, dealerHandDisplay);
@@ -93,8 +99,8 @@ public class BlackjackScene extends SceneController {
 		blackjackMatch.start(boardPane, playerCardPanes, dealerCardPane);
 	}
 	
-	public void showMatchOptions(boolean canDouble, boolean canSplit, boolean allowInsurance, boolean allowEvenMoney) {
-		hitButton.setVisible(true);
+	public void showMatchOptions(boolean canHit, boolean canDouble, boolean canSplit, boolean allowInsurance, boolean allowEvenMoney) {
+		hitButton.setVisible(canHit);
 		doubleBetButton.setVisible(canDouble);
 		standButton.setVisible(true);
 		splitButton.setVisible(canSplit);
@@ -180,9 +186,30 @@ public class BlackjackScene extends SceneController {
 	}
 	
 	public void showEndMatchOptions(boolean balanceDepleted) {
-		matchHBox.setVisible(false);
-		endMatchHBox.setVisible(true);
-		mainMenuButton.setVisible(true);
-		placeBetButton.setVisible(!balanceDepleted);
+		if (!balanceDepleted) {
+			matchHBox.setVisible(false);
+			endMatchHBox.setVisible(true);
+			mainMenuButton.setVisible(true);
+			placeBetButton.setVisible(true);
+		}
+		else {
+			// Reset the player's stats and give them money if their balance is depleted.
+			Player player = Player.getInstance();
+			DatabaseManager.getInstance().resetUserStats(player.getUsername(), Player.START_BALANCE);
+			player.setBalance(Player.START_BALANCE);
+			
+			Routine.doAfter(() -> {
+				gameOverPane.setVisible(true);
+				String text = !Player.getInstance().getGuest() ? "Your account transaction history has been reset." : "";
+				text += "\n\nAn anonymous donor\nhas gifted you $" + Player.START_BALANCE + ".";
+				gameOverText.setText(text);
+				gameOverPane.toFront();
+			}, 2000);			
+		}
+	}
+	
+	@FXML
+	private void onGameOverContinueButtonPressed() {		
+		switchToMainMenuScene();
 	}
 }

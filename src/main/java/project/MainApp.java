@@ -25,8 +25,13 @@ public class MainApp extends Application {
 	}
 
 	public static void main(String[] args) {
-		Player.setInstance("Player", 1000);
+		DatabaseManager DBM = DatabaseManager.getInstance();
+		DBM.createUsersTable();
+		DBM.createBanksTable();
+		DBM.createWinsTable();
+		DBM.createLossesTable();
 		launch(args);	
+		DBM.closeConnection();		
 	}
 
 }
