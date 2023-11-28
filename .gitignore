@@ -1,1 +1,7 @@
 /bin/
+/.gradle/
+build/*
+!build/RunnableJAR
+build/RunnableJAR/*
+!build/RunnableJAR/CMSC495-Captsone.jar
+
