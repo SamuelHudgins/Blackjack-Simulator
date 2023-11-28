@@ -5,6 +5,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+/**
+ * This class extends the {@code SceneController} and manages the GUI events for 
+ * the login scene.
+ */
 public class LoginScene extends SceneController {
 	
 	@FXML private TextField usernameField;	

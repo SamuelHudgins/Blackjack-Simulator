@@ -8,6 +8,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
+/**
+ * This class extends the {@code SceneController} and manages the GUI events for the betting scene.
+ */
 public class BettingScene extends SceneController {
 
 	@FXML private Label bankLabel;

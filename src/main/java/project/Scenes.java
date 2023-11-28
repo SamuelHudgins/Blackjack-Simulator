@@ -1,5 +1,9 @@
 package project;
 
+/**
+ * Contains the names and FXML file path information for the various 
+ * scenes in the application.
+ */
 public enum Scenes {
 	START("StartScene"),
 	LOGIN("LoginScene"),

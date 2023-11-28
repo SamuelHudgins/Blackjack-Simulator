@@ -6,6 +6,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
+/**
+ * This class extends the {@code SceneController} and manages the GUI 
+ * events for the delete account scene.
+ */
 public class DeleteScene extends SceneController {
 
 	@FXML private TextField usernameField;

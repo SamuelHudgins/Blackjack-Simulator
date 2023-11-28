@@ -1,5 +1,9 @@
 package project;
 
+/**
+ * This class is used by the {@code DatabaseManager} class to store result set row information 
+ * and by the {@code StatsScene} class when displaying the row information in the stats screen.
+ */
 public class UserStat {
 	
 	private String rank;

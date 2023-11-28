@@ -3,6 +3,9 @@ package project;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Holds information for representing and creating the 52 cards in a deck.
+ */
 public class Deck {
 	private String[] cardValues = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 	private String[] cardSuits = { "C", "D", "H", "S" };

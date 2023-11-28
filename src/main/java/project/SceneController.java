@@ -6,14 +6,29 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * The base class for all classes that control GUI scene events in the application.
+ */
 public abstract class SceneController {
 		
-	private static Stage stage;
+	private static Stage stage;	
 	
+	/**
+	 * Sets the stage that all scenes and subclasses of {@code SceneController} will 
+	 * use to display the GUI to the given stage.
+	 * @param mainStage The stage to display GUI through. This is a top-level 
+	 * JavaFX container.
+	 */
 	public static void setStage(Stage mainStage) {
 		stage = mainStage;
 	}
 	
+	/**
+	 * Switches the current scene to a new one with the provided {@code Scenes} value.
+	 * @param sceneName The {@code Scenes} type to use for setting the new scene. This 
+	 * method uses this value to load an associated FXML file containing the scene to load.
+	 * @return The controller associated with the loaded scene's root object.
+	 */
 	private SceneController switchScene(Scenes sceneName) {		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(sceneName.toPath()));
 		Parent root = null;

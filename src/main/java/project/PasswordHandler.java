@@ -17,6 +17,9 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+/**
+ * Contains static methods for encrypting and decrypting a String.
+ */
 public class PasswordHandler {
 
 	// Note: Hard-coding a secret key and salt is generally unsafe and should 

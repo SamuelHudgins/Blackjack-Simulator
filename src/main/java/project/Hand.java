@@ -8,6 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
+/**
+ * Holds information for representing instances of hands. A {@code Hand} 
+ * instance holds {@code Card} instances and contains the bet value placed on a hand.
+ */
 public class Hand implements IPlaceable {
 	
 	@FXML private GridPane cardPane;

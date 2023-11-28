@@ -2,6 +2,9 @@ package project;
 
 import javafx.scene.control.Label;
 
+/**
+ * Holds the references to GUI elements used for displaying hand values and statuses.
+ */
 public class HandDisplay {
 	
 	private Label handLabel;        

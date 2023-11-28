@@ -3,6 +3,10 @@ package project;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * <p>This class is used for creating and managing a SQLite relational database. 
+ * The database contains four tables: Users, Banks, Wins, and Losses.
+ */
 public class DatabaseManager {
 
 	private static DatabaseManager instance;
@@ -14,48 +18,62 @@ public class DatabaseManager {
 	public final String USERS = "Users";	
 	public final String BANKS = "Banks";	
 	public final String WINS = "Wins";	
-	public final String LOSSES = "Losses";
+	public final String LOSSES = "Losses";	
 	
-	public static DatabaseManager getInstance() {
-		if (instance == null) {
-			instance = new DatabaseManager(DATABASE_NAME);			
-		}
-		return instance;
-	}
-	
-	private DatabaseManager(String databaseName) {
+	/**
+	 * The private constructor of {@code DatabaseManager} prevents outside classes from 
+	 * instantiating copies of the database. It attempts to establish a connection to the database. 
+	 * This should also create a new database file in the current directory the application is running 
+	 * in, where the database will reside.
+	 */
+	private DatabaseManager() {
 		try {
 			connection = DriverManager.getConnection(DEFAULT_URL + DATABASE_NAME + ".db");
 			String sql = "PRAGMA foreign_keys = ON";
 			Statement stmt = connection.createStatement();
 			stmt.execute(sql);
-			stmt.close();
-			
+			stmt.close();			
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		}
-	}
+	}	
 	
-	private boolean createTable(String tableName, String createSQL) {
-//		String sql = MessageFormat.format("SELECT name FROM sqlite_master WHERE type=\"table\" AND name=\"{0}\"", tableName);
+	/**
+	 * Gets the {@code DatabaseManager} instance.
+	 * @return A new {@code DatabaseManager}, if one doesn't exist, or the current instance.
+	 */
+	public static DatabaseManager getInstance() {
+		if (instance == null) {
+			instance = new DatabaseManager();			
+		}
+		return instance;
+	}		
+	
+	/**
+     * Checks if the given table exists in the database, then uses the given string query to create the table.
+     * @param tableName The name of the table to create.
+     * @param createSQL The SQL query to use for creating the table.
+     */
+	private void createTable(String tableName, String createSQL) {
 		String sql = "SELECT name FROM sqlite_master WHERE type=\"table\" AND name=\"%s\"".formatted(tableName);
 		try {
 			Statement test = connection.createStatement();
 			ResultSet rs  = test.executeQuery(sql);
 			if (rs.next()) {  // The table already exists			
 				test.close();
-				return false;
+				return;
 			}
 			Statement stmt = connection.createStatement();
 			stmt.execute(createSQL);
 			stmt.close();
-			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}	
 	}
-	
+		
+	/**
+     * Creates the Users table in the database. 
+     */
 	public void createUsersTable() {
 		String sql = "CREATE TABLE \"Users\" ("
 					+ "	\"ID\"			INTEGER NOT NULL, "
@@ -66,6 +84,9 @@ public class DatabaseManager {
 		createTable(USERS, sql);
 	}
 	
+	/**
+     * Creates the Banks table in the database. 
+     */
 	public void createBanksTable() {
 		String sql = "CREATE TABLE \"Banks\" ("
 					+ "	\"ID\"			INTEGER, "
@@ -77,6 +98,9 @@ public class DatabaseManager {
 		createTable(BANKS, sql);
 	}
 	
+	/**
+     * Creates the Wins table in the database. 
+     */
 	public void createWinsTable() {
 		String sql = "CREATE TABLE \"Wins\" ("
 				+ "	\"User_ID\"		INTEGER, "
@@ -86,6 +110,9 @@ public class DatabaseManager {
 		createTable(WINS, sql);
 	}
 	
+	/**
+     * Creates the Losses table in the database. 
+     */
 	public void createLossesTable() {
 		String sql = "CREATE TABLE \"Losses\" ("
 					+ "	\"User_ID\"		INTEGER, "
@@ -95,6 +122,11 @@ public class DatabaseManager {
 		createTable(LOSSES, sql);
 	}
 	
+	/**
+     * Checks the Users table for the given username. 
+     * @param username The username to search for.
+     * @return True if the username exists. Otherwise, false.
+     */
 	public boolean usernameExist(String username) {
 		String sql = "SELECT EXISTS (SELECT 1 FROM Users WHERE Username = ?);";				
 		try {
@@ -113,8 +145,14 @@ public class DatabaseManager {
 		return false;
 	}
 
-	public boolean insertUser(String userName, String password) {
-		if (usernameExist(userName)) return false;
+	/**
+     * Checks if the given username exists in the Users table, then inserts a 
+     * new username and password into the table, if the given username is not already within it. 
+     * @param username The username to search for and add.
+     * @param password The password to add with the given username.
+     */
+	public void insertUser(String userName, String password) {
+		if (usernameExist(userName)) return;
 
 		String sql = "INSERT INTO Users (Username, Password) VALUES (?, ?);";
 		try {
@@ -124,11 +162,15 @@ public class DatabaseManager {
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
-		return true;
 	}
 	
+	/**
+	 * Attempts to get the user ID associated with the given user from the Users table.
+	 * @param userName The username to retrieve the ID for.
+	 * @return The retrieved user ID from the Users table. If the username is not in 
+	 * the Users table or an SQL exception, then this method returns -1.
+	 */
 	private int getUserID(String userName) {
 		if (!usernameExist(userName)) return -1;
 
@@ -148,6 +190,12 @@ public class DatabaseManager {
 		return -1;
 	}
 	
+	/**
+	 * Attempts to get the user password associated with the given user from the Users table.
+	 * @param userName The username to retrieve the password for.
+	 * @return The retrieved user password from the Users table. If the username is not in 
+	 * the Users table or an SQL exception, then this method returns null.
+	 */
 	public String getUserPassword(String userName) {
 		if (!usernameExist(userName)) return null;
 		
@@ -167,6 +215,13 @@ public class DatabaseManager {
 		return null;
 	}
 	
+	
+	/**
+	 * Attempts to get the user bank balance associated with the given user from the Banks table.
+	 * @param userName The username to use for retrieving their bank balance.
+	 * @return The retrieved user's bank balance from the Banks table. If the username is not 
+	 * in the Users table or an SQL exception, then this method returns -1.0.
+	 */
 	public Double getUserBankBalance(String userName) {
 		int userID = getUserID(userName);
 		if (userID == -1) return -1.0;
@@ -186,6 +241,11 @@ public class DatabaseManager {
 		return -1.0;
 	}
 	
+	/**
+	 * Sets the bank balance associated with the given user in the Banks table. 
+	 * @param userName The username of the user whose balance will be adjusted.
+	 * @param amount The amount to set in the bank balance.
+	 */
 	public void setUserBankBalance(String userName, Double amount) {
 		int userID = getUserID(userName);
 		if (userID == -1) return;
@@ -200,9 +260,14 @@ public class DatabaseManager {
 		}
 	}
 
-	public boolean insertBank(String userName, Double amount) {		
+	/**
+	 * Inserts a new bank relation for the given user with the specified amount.
+	 * @param userName The username of the user that will receive the new bank account.
+	 * @param amount The initial amount to place in the bank account.
+	 */
+	public void insertBank(String userName, Double amount) {		
 		int userID = getUserID(userName);
-		if (userID == -1) return false;
+		if (userID == -1) return;
 
 		String sql = "INSERT INTO Banks (User_ID, Balance) VALUES (" + userID + ", " + amount + ")";
 		try {			
@@ -211,14 +276,19 @@ public class DatabaseManager {
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
-		return true;
 	}
 	
-	public boolean insertWinnings(String userName, Double amount) {		
+	
+	/**
+	 * Inserts a new winnings relation for the given user with the specified amount.
+	 * @param userName The username of the user that will receive winnings.
+	 * @param amount The amount of the winnings.
+	 * @return
+	 */
+	public void insertWinnings(String userName, Double amount) {		
 		int userID = getUserID(userName);
-		if (userID == -1) return false;
+		if (userID == -1) return;
 
 		String sql = "INSERT INTO Wins (User_ID, Amount) VALUES (" + userID + ", ?)";
 		try {			
@@ -228,11 +298,15 @@ public class DatabaseManager {
 			pstmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
-		return true;
 	}
 	
+	/**
+	 * Inserts a new losses relation for the given user with the specified amount.
+	 * @param userName The username of the user that will receive losses.
+	 * @param amount The amount of the losses.
+	 * @return
+	 */
 	public boolean insertLosses(String userName, Double amount) {		
 		int userID = getUserID(userName);
 		if (userID == -1) return false;
@@ -250,8 +324,13 @@ public class DatabaseManager {
 		return true;
 	}
 	
-	public boolean removeUser(String userName) {
-		if (!usernameExist(userName)) return false;
+	
+	/**
+	 * Attempts to remove the provided user from the Users table of the database.
+	 * @param userName The username of the user to remove.
+	 */
+	public void removeUser(String userName) {
+		if (!usernameExist(userName)) return;
 
 		String sql = "DELETE FROM Users WHERE Username = ?";
 		try {
@@ -259,13 +338,18 @@ public class DatabaseManager {
 			pstmt.setString(1, userName);
 			pstmt.executeUpdate();			
 			pstmt.close();
-			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
 	}
 	
+	
+	/**
+	 * Generates a result set of users that includes their usernames, balance, and 
+	 * summed wins and losses and sorts the users in descending order by their balance.
+	 * @return An ArrayList of {@code UserStat} instances. Each {@code UserStat} holds 
+	 * information about a single row of the result set.
+	 */
 	public ArrayList<UserStat> getAllUsersStats() {
 		String sql = ("SELECT "
 						+ "ROW_NUMBER() OVER(ORDER BY Balance DESC) AS Rank, "
@@ -286,6 +370,11 @@ public class DatabaseManager {
 		}
 	}
 	
+	/**
+	 * Converts a given result set into an ArrayList of {@code UserStat} instances.
+	 * @param rs The result set to convert into an ArrayList.
+	 * @return An ArrayList of {@code UserStat} instances.
+	 */
 	private ArrayList<UserStat> resultSetToUserStatList(ResultSet rs) {
 		if (rs == null) return null;
 		
@@ -308,6 +397,12 @@ public class DatabaseManager {
 		}
 	}
 	
+	/**
+	 * Resets the wins and losses relations of the given user's username and sets 
+	 * their bank balance to the provided amount.
+	 * @param userName The username of the user whose information will be changed.
+	 * @param bankAmount The amount to set the user's balance to.
+	 */
 	public void resetUserStats(String userName, Double bankAmount) {
 		int userID = getUserID(userName);
 		if (userID == -1) return;
@@ -327,6 +422,10 @@ public class DatabaseManager {
 		}
 	}
 	
+	/**
+     * Releases this Connection object's database and JDBC resources 
+     * immediately instead of waiting for them to be automatically released. 
+     */
 	public void closeConnection() {
 		try {
 			connection.close();

@@ -9,6 +9,11 @@ import javafx.util.Duration;
 import project.Routine.Action;
 import project.Routine.Conditional;
 
+/**
+ * Contains the processes required for running the blackjack match. This class 
+ * communicates with the {@code BlackjackScene} controller to determine what and 
+ * when GUI elements should be available during the match.
+ */
 public class BlackjackMatch {
 
 	private BlackjackScene blackjackScene;
@@ -68,33 +73,45 @@ public class BlackjackMatch {
 		disperseCards();
 	}
 	
+	/**
+	 * Uses a {@code TimeLine} while dispersing cards to the player and dealer's 
+	 * hands over time. The first card is given to the player, the second to the 
+	 * dealer, and the third and fourth to the player and dealer again, respectively.
+	 */
 	private void disperseCards() {
 		Timeline timeline = new Timeline();
 		int startTime = 500;
 		int increment = 300;
 		int duration = increment;
+		
+		// Gives the first card to the player.
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
 			hitHand(currentPlayerHand);
 			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
 		}));
 		duration += increment;
+		
+		// Gives the second flipped card to the dealer.
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
 			hitHand(dealerHand, true);
 			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
 		}));
 		duration += increment;
+		
+		// Gives the third card to the player.
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
 			hitHand(currentPlayerHand);
 			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
 		}));
 		duration += increment;
+		
+		// Gives the last card to the dealer.
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
 			hitHand(dealerHand);
 			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
 		}));
 		duration += increment;
 		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-//			blackjackScene.showMatchOptions(canHit(), canDouble(), canSplit(), canAcceptInsurance(), canAcceptEvenMoney());
 			checkPlayerHand(); 
 		}));
 		timeline.setDelay(Duration.millis(startTime));
@@ -102,6 +119,10 @@ public class BlackjackMatch {
 	}
 	
 	// Hitting
+	/**
+	 * Determines whether the player can perform a hit.
+	 * @return True, if the player's hand value is less than 21. Otherwise, false.
+	 */
 	private boolean canHit() {
 		return currentPlayerHand.getHandValue() < 21;
 	}
@@ -113,9 +134,15 @@ public class BlackjackMatch {
 	}
 	
 	// Doubling
+	
+	/**
+	 * Determines whether the player can double their bet.
+	 * @return True, if the player's hand has less than or equal to two cards 
+	 * and if the player has enough money. Otherwise, false.
+	 */
 	private boolean canDouble() {
 		if (currentPlayerHand.getSize() > 2) return false;
-		return (player.getBalance() - (playerBet)) >= 0;
+		return (player.getBalance() - playerBet) >= 0;
 	}
 	
 	public void doublePlayerBet() {
@@ -136,6 +163,12 @@ public class BlackjackMatch {
 	}
 	
 	// Splitting
+	/**
+	 * Determines whether the player can split their hand into multiple hands.
+	 * @return True, if the player's hand has less than or equal to two cards, if 
+	 * they have less than three split hands, and if the player has enough money 
+	 * to perform a split. Otherwise, false.
+	 */
 	private boolean canSplit() {
 		if (currentPlayerHand.getCards().size() >= 3) return false;
 		if (playerSplitHands.size() >= MAX_SPLIT_HANDS) return false;
@@ -153,7 +186,8 @@ public class BlackjackMatch {
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
 		blackjackScene.setPlayerBetLabel(Double.toString(playerBet));
 		Routine.doAfter(() -> {
-			// Splitting assumes the current player's hand has only two cards, so pull a card from index 0 or 1.
+			// Splitting assumes the current player's hand has only two cards, so 
+			// pull the card from the hand at index 0 or 1.
 			Card splitCard = currentPlayerHand.getCards().get(1);
 			Hand splitHand = GameObject.Instantiate("Hand.fxml");
 			splitHand.setParentPane(boardPane);
@@ -172,6 +206,11 @@ public class BlackjackMatch {
 	}
 	
 	// Insurance
+	/**
+	 * Determines whether the player can accept insurance.
+	 * @return True, if the difference between half of the player's bet and their balance is 
+	 * greater than zero and if the dealer's revealed card is an Ace. Otherwise, false.
+	 */
 	private boolean canAcceptInsurance() {
 		if (player.getBalance() - (playerBet * 0.5f) <= 0) return false;
 		for (Card card : dealerHand.getCards()) {
@@ -180,6 +219,11 @@ public class BlackjackMatch {
 		return false;
 	}
 	
+	/**
+	 * Determines whether the player can accept even money.
+	 * @return True, if the conditions for accepting insurance are true and the player's 
+	 * hand equals 21. Otherwise, false.
+	 */
 	private boolean canAcceptEvenMoney() {
 		return canAcceptInsurance() && currentPlayerHand.getHandValue() == 21;
 	}
@@ -209,6 +253,10 @@ public class BlackjackMatch {
 		}, 1000);
 	}
 	
+	/**
+	 * Determines which actions the player can perform or finishes their hand if 
+	 * their hand's value is 21 or higher.
+	 */
 	private void checkPlayerHand() {
 		if (currentPlayerHand.getHandValue() < 21) {
 			blackjackScene.showMatchOptions(canHit(), canDouble(), canSplit(), canAcceptInsurance(), canAcceptEvenMoney());
@@ -274,12 +322,20 @@ public class BlackjackMatch {
 		dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
 	}
 	
+	/**
+	 * Uses an infinitely looping routine to hit the dealer's hand until their hand's 
+	 * value is 21 or higher.
+	 */
 	private void dealerHits() {
+		// The event(s) to perform on each iteration of the routine.
 		Action action = () -> {
 			hitHand(dealerHand);
 			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
 		};
+		// The boolean condition that ends the routine.
 		Conditional endCondition = () -> dealerHand.getHandValue() >= DEALER_HIT_STOP;
+		
+		// The event(s) to perform at the end of the routine.
 		Action endAction = () -> compareHands();
 		Routine.doRepeatOnCondition(action, 1000, endCondition, endAction);
 	}
@@ -329,8 +385,8 @@ public class BlackjackMatch {
 		player.adjustBalance(payout);
 		if (!player.getGuest()) {
 			DatabaseManager DBM = DatabaseManager.getInstance();
-			// When the player wins, they earn more money than they bet since they earn their money back plus extra.
-			// So, if their payout is higher than the bet, then they earned money. Otherwise, they loss money.
+			// When the player wins, they earn more money than they bet since they earn their money back plus extra. 
+			// So, if their payout exceeds the bet, they have earned money. Otherwise, they have lost money.
 			if (playerBet < payout) DBM.insertWinnings(player.getUsername(), payout - currentPlayerHand.getBet());
 			else if (playerBet > payout) DBM.insertLosses(player.getUsername(), currentPlayerHand.getBet());
 			DBM.setUserBankBalance(player.getUsername(), player.getBalance());

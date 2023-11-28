@@ -6,6 +6,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+/**
+ * Holds information for representing instances of cards, including their 
+ * face value and imagery.
+ */
 public class Card implements IPlaceable {
 	
 	@FXML private ImageView cardImage;

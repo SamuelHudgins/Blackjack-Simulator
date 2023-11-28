@@ -7,6 +7,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Extends the {@code SceneController} and manages the 
+ * GUI events for the blackjack match scene. This class also sets up a 
+ * {@code BlackjackMatch} instance, which controls the gameplay logic of the blackjack match.
+ */
 public class BlackjackScene extends SceneController {
 
 	@FXML private Pane boardPane;
@@ -88,6 +93,10 @@ public class BlackjackScene extends SceneController {
 		evenMoneyButton.setVisible(false);
 	}
 	
+	/**
+	 * Sets up the GUI and provides GUI information to the {@code BlackjackMatch} instance 
+	 * to determine the placement of hands and their displays.
+	 */
 	public void setup() {
 		Player player = Player.getInstance();
 		playerBankLabel.setText("Bank: $" + (player.getBalance()));

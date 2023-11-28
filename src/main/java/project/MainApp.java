@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Contains the processes for setting up a database and starting the JavaFX application.
+ */
 public class MainApp extends Application {
 	
 	@Override

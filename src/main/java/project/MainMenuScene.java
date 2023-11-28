@@ -4,6 +4,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+/**
+ * This class extends the {@code SceneController} and manages the GUI events 
+ * for the main menu scene.
+ */
 public class MainMenuScene extends SceneController {
 
 	@FXML private Label usernameLabel;	

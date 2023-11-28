@@ -8,6 +8,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+/**
+ * This class extends the {@code SceneController} and manages the GUI events 
+ * for the stats scene. This class uses {@code UserStats} class instances 
+ * to populate the table.
+ */
 public class StatsScene extends SceneController {
 
 	// Table

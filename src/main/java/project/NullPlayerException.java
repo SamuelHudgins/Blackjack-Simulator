@@ -1,5 +1,9 @@
 package project;
 
+/**
+ * This class is used for throwing runtime exceptions in the event a 
+ * process attempts to get the {@code Player} instance before it has been set.
+ */
 public class NullPlayerException extends RuntimeException {
 
 	/**
