@@ -1,11 +1,6 @@
 package project;
 
-import java.util.ArrayList;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
 import project.Routine.Action;
 import project.Routine.Conditional;
 
@@ -20,11 +15,9 @@ public class BlackjackMatch {
 	private Pane boardPane;
 	private Deck deck;
 	
-	private Player player;
-	private double playerBet;
-	private double insuranceBet;
-	
-	private ArrayList<Hand> playerSplitHands;
+	private Player player;	
+	private Hand[] playerSplitHands;
+	private int splitHandCount;
 	private Hand currentPlayerHand;
 	private final int MAX_SPLIT_HANDS = 3;
 	private Pane[] playerSplitCardPanes;
@@ -51,25 +44,26 @@ public class BlackjackMatch {
 	
 	public BlackjackMatch(BlackjackScene scene, HandDisplay playerHandDisplay, HandDisplay dealerHandDisplay) {		
 		player = Player.getInstance();
-		playerBet = player.getBet();
 		blackjackScene = scene;
 		this.playerHandDisplay = playerHandDisplay;
 		this.dealerHandDisplay = dealerHandDisplay;
-		playerSplitHands = new ArrayList<Hand>(MAX_SPLIT_HANDS);
+		playerSplitHands = new Hand[MAX_SPLIT_HANDS];
 	}
 	
 	public void start(Pane boardPane, Pane[] playerCardPanes, Pane dealerCardPane) {
 		this.boardPane = boardPane;
-		deck = new Deck();		
+		deck = new Deck(blackjackScene.getDeckPane(), boardPane);		
 		currentPlayerHand = GameObject.Instantiate("Hand.fxml");
 		currentPlayerHand.setParentPane(this.boardPane);
+		currentPlayerHand.setSceneNode(this.boardPane);
 		currentPlayerHandPane = playerCardPanes[0];
 		currentPlayerHand.setPosition(currentPlayerHandPane);
-		currentPlayerHand.setBet(playerBet);
+		currentPlayerHand.setBet(player.getBet());
 		playerSplitCardPanes = new Pane[] { playerCardPanes[1], playerCardPanes[2], playerCardPanes[3] };
 		dealerHand = GameObject.Instantiate("Hand.fxml");
 		dealerHand.setParentPane(this.boardPane);
-		dealerHand.setPosition(dealerCardPane);			
+		dealerHand.setSceneNode(this.boardPane);
+		dealerHand.setPosition(dealerCardPane);
 		disperseCards();
 	}
 	
@@ -78,44 +72,22 @@ public class BlackjackMatch {
 	 * hands over time. The first card is given to the player, the second to the 
 	 * dealer, and the third and fourth to the player and dealer again, respectively.
 	 */
-	private void disperseCards() {
-		Timeline timeline = new Timeline();
-		int startTime = 500;
-		int increment = 300;
-		int duration = increment;
-		
+	private void disperseCards() {		
 		// Gives the first card to the player.
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			hitHand(currentPlayerHand);
-			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-		}));
-		duration += increment;
+		Action giveCard1 = () -> hitHand(currentPlayerHand, playerHandDisplay);
 		
 		// Gives the second flipped card to the dealer.
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			hitHand(dealerHand, true);
-			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
-		}));
-		duration += increment;
+		Action giveCard2 = () -> hitHand(dealerHand, dealerHandDisplay, true);
 		
 		// Gives the third card to the player.
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			hitHand(currentPlayerHand);
-			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-		}));
-		duration += increment;
+		Action giveCard3 = () -> hitHand(currentPlayerHand, playerHandDisplay);
 		
 		// Gives the last card to the dealer.
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			hitHand(dealerHand);
-			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
-		}));
-		duration += increment;
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			checkPlayerHand(); 
-		}));
-		timeline.setDelay(Duration.millis(startTime));
-		timeline.play();
+		Action giveCard4 = () -> hitHand(dealerHand, dealerHandDisplay);
+		
+		Action[] actions = new Action[] { giveCard1, giveCard2, giveCard3, giveCard4, () -> checkPlayerHand() };
+		float increment = 0.35f;
+		Routine.doActionList(increment, actions);
 	}
 	
 	// Hitting
@@ -128,94 +100,91 @@ public class BlackjackMatch {
 	}
 	
 	public void playerHit() {
-		hitHand(currentPlayerHand);
-		playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-		checkPlayerHand();
+		Routine.onStartAndFinish(() -> hitHand(currentPlayerHand, playerHandDisplay), 
+			() -> checkPlayerHand(), Animation.CARD_TRANSLATE_TIME);	
 	}
 	
 	// Doubling
 	
 	/**
 	 * Determines whether the player can double their bet.
-	 * @return True, if the player's hand has less than or equal to two cards 
-	 * and if the player has enough money. Otherwise, false.
+	 * @return True, if:
+	 * <br> a) the player's hand value is less than 21,
+	 * <br> b) the player's hand has less than or equal to two cards, 
+	 * <br> c) and if the player has enough money. 
+	 * <p> Otherwise, false.
 	 */
 	private boolean canDouble() {
+		if (!canHit()) return false;
 		if (currentPlayerHand.getSize() > 2) return false;
-		return (player.getBalance() - playerBet) >= 0;
+		return (player.getBalance() - currentPlayerHand.getBet()) >= 0;
 	}
 	
 	public void doublePlayerBet() {
-		player.adjustBalance(-playerBet);
-		currentPlayerHand.setBet(playerBet * 2);
+		player.adjustBalance(-currentPlayerHand.getBet());
+		currentPlayerHand.doubleMainBet();
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
-		blackjackScene.setPlayerBetLabel(Double.toString(playerBet));
-		Routine.doAfter(() -> {
-			hitHand(currentPlayerHand);
-			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-			finishPlayerHand();
-		}, 1000);
-	}
-	
-	// Standing
-	public void playerStand() {
-		finishPlayerHand();
+		blackjackScene.setPlayerBetLabel(Double.toString(currentPlayerHand.getBet()));		
+		Action[] actions = new Action[] {
+			() -> hitHand(currentPlayerHand, playerHandDisplay),
+			() -> finishPlayerHand()
+		};
+		Routine.doActionList(Animation.CARD_TRANSLATE_TIME, actions);
 	}
 	
 	// Splitting
 	/**
 	 * Determines whether the player can split their hand into multiple hands.
-	 * @return True, if the player's hand has less than or equal to two cards, if 
-	 * they have less than three split hands, and if the player has enough money 
-	 * to perform a split. Otherwise, false.
+	 * @return True, if:
+	 * <br> a) the player's hand has less than or equal to two cards, 
+	 * <br> b) if the player has less than three split hands, 
+	 * <br> c) and if the player has enough money to perform a split. 
+	 * <p> Otherwise, false.
 	 */
 	private boolean canSplit() {
-		if (currentPlayerHand.getCards().size() >= 3) return false;
-		if (playerSplitHands.size() >= MAX_SPLIT_HANDS) return false;
-		if ((player.getBalance() - playerBet) <= 0) return false;
-		int cardValue = 0;
-		for (Card card : currentPlayerHand.getCards()) {
-			if (cardValue == 0) cardValue = card.getFaceValue();
-			else if (cardValue == card.getFaceValue()) return true;		
-		}
-		return false;
+		if (splitHandCount >= MAX_SPLIT_HANDS) return false;
+		if ((player.getBalance() - currentPlayerHand.getBet()) <= 0) return false;
+		return currentPlayerHand.splittable();
 	}
 	
-	public void playerSplit() {
-		player.adjustBalance(-playerBet);		
+	public void playerSplit() {	
+		player.adjustBalance(-currentPlayerHand.getBet());		
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
-		blackjackScene.setPlayerBetLabel(Double.toString(playerBet));
+		
 		Routine.doAfter(() -> {
-			// Splitting assumes the current player's hand has only two cards, so 
-			// pull the card from the hand at index 0 or 1.
+			// Splitting assumes the current player's hand has only two cards, so pull the second card 
+			// from the player's hand.
 			Card splitCard = currentPlayerHand.getCards().get(1);
 			Hand splitHand = GameObject.Instantiate("Hand.fxml");
 			splitHand.setParentPane(boardPane);
+			splitHand.setSceneNode(boardPane);
 			currentPlayerHand.removeCardFromHand(splitCard);
 			splitHand.addCardToHand(splitCard);
-			splitHand.setBet(playerBet);
-			splitHand.setSplitScale();
-			
-			playerSplitHands.add(splitHand);
-			int index = playerSplitHands.size() - 1;
-			playerSplitHands.get(index).setPosition(playerSplitCardPanes[index]);
-			hitHand(currentPlayerHand);			
-			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-			blackjackScene.showSplitButton(canSplit());
-		}, 1000);
+			splitHand.setBet(currentPlayerHand.getBet());			
+			playerSplitHands[splitHandCount] = splitHand;
+			Animation.Translate(splitHand, currentPlayerHandPane, playerSplitCardPanes[splitHandCount], () -> playerHit());
+			Animation.Scale(splitHand, splitHand.getCurrentScale(), splitHand.getSplitScale());
+			splitHandCount++;
+		}, 0.5f);
 	}
 	
 	// Insurance
 	/**
 	 * Determines whether the player can accept insurance.
-	 * @return True, if the difference between half of the player's bet and their balance is 
-	 * greater than zero and if the dealer's revealed card is an Ace. Otherwise, false.
+	 * @return True, if:
+	 * <br> a) the player hasn't accepted insurance on their current hand, 
+	 * <br> b) if the player's current hand has two cards, 
+	 * <br> c) if the player's current hand has not busted, 
+	 * <br> d) if the difference between half of the player's bet and their balance is greater than zero, 
+	 * <br> e) and if the dealer's revealed card is an Ace. 
+	 * <p> Otherwise, false.
 	 */
 	private boolean canAcceptInsurance() {
-		if (player.getBalance() - (playerBet * 0.5f) <= 0) return false;
-		for (Card card : dealerHand.getCards()) {
-			if (!card.getFaceDown() && card.getValue().equals("A")) return true;
-		}
+		if (currentPlayerHand.getInsuranceBet() > 0) return false;
+		if (currentPlayerHand.getSize() > 2) return false;
+		if (currentPlayerHand.busted()) return false;
+		if (player.getBalance() - (currentPlayerHand.getBet() * 0.5f) <= 0) return false;
+		if (dealerHand.getFaceUpCard().getValue().equals("A")) return true;
 		return false;
 	}
 	
@@ -225,69 +194,61 @@ public class BlackjackMatch {
 	 * hand equals 21. Otherwise, false.
 	 */
 	private boolean canAcceptEvenMoney() {
-		return canAcceptInsurance() && currentPlayerHand.getHandValue() == 21;
+		return canAcceptInsurance() && currentPlayerHand.hasNaturalBlackjack();
 	}
 	
-	// Using insurance ends the game if the dealer has a blackjack
 	public void useInsurance() {
-		insuranceBet = playerBet * 0.5f;
+		double insuranceBet = currentPlayerHand.getBet() * 0.5f;
 		player.adjustBalance(-insuranceBet);
+		currentPlayerHand.setInsuranceBet(insuranceBet);
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
-		blackjackScene.setPlayerBetLabel(Double.toString(playerBet));
-		
-		Routine.doAfter(() -> {
-			boolean dealerHasBlackjack = false;
-			for (Card card : dealerHand.getCards()) {
-				if (card.getFaceDown() && card.getFaceValue() == 10) {
-					dealerHasBlackjack = true;
-					revealDealerCard();
-					compareHands();
-					break;
-				}
-			}
-			if (!dealerHasBlackjack) {
-				DatabaseManager.getInstance().insertLosses(player.getUsername(), insuranceBet);
-				blackjackScene.showInusuranceLost();
-				insuranceBet = 0;
-			}
-		}, 1000);
+		checkPlayerHand();
 	}
 	
 	/**
-	 * Determines which actions the player can perform or finishes their hand if 
-	 * their hand's value is 21 or higher.
+	 * Determines which actions the player can perform and finishes their hand if they have 
+	 * blackjack, bust, or cannot perform any actions (other than standing).
 	 */
 	private void checkPlayerHand() {
-		if (currentPlayerHand.getHandValue() < 21) {
-			blackjackScene.showMatchOptions(canHit(), canDouble(), canSplit(), canAcceptInsurance(), canAcceptEvenMoney());
-			return;
+		if (currentPlayerHand.hasNaturalBlackjack()) {
+			playerHandDisplay.setStatusLabel("Blackjack!");
+			currentPlayerHand.setFinished(true);
 		}
-		finishPlayerHand();
-		if (currentPlayerHand.hasNaturalBlackjack()) playerHandDisplay.setStatusLabel("Blackjack!");
-		else if (currentPlayerHand.busted()) playerHandDisplay.setStatusLabel("Bust");
+		else if (currentPlayerHand.busted()) {
+			playerHandDisplay.setStatusLabel("Bust");
+			currentPlayerHand.setFinished(true);
+		}
+		boolean canHit = canHit();
+		boolean canDouble = canDouble();
+		boolean canSplit = canSplit();
+		boolean canAcceptInsurance = canAcceptInsurance();
+		boolean canAcceptEvenMoney = canAcceptEvenMoney();
+		if (canHit || canDouble || canSplit || canAcceptInsurance || canAcceptEvenMoney) {
+			blackjackScene.showMatchOptions(canHit, canDouble, canSplit, canAcceptInsurance, canAcceptEvenMoney);
+			blackjackScene.showBestOption(currentPlayerHand, dealerHand);			
+		}
+		else {
+			blackjackScene.hideMatchOptions();
+			Routine.doAfter(() -> finishPlayerHand(), 1f);
+		}
 	}
 	
-	private void finishPlayerHand() {
+	public void finishPlayerHand() {
 		currentPlayerHand.setFinished(true);		
 		
 		// Look for the next unfinished split hand, switch the current player's hand with it, 
 		// hit it, and update the display.
-		for (int i = 0; i < playerSplitHands.size(); i++) {
-			if (!playerSplitHands.get(i).getFinished()) {
-				Hand nextSplitHand = playerSplitHands.get(i);
-				playerSplitHands.remove(i);
-				currentPlayerHand.setPosition(playerSplitCardPanes[i]);
-				nextSplitHand.setPosition(currentPlayerHandPane);
-				playerSplitHands.add(i, currentPlayerHand);
-				currentPlayerHand.setSplitScale();
+		for (int i = 0; i < splitHandCount; i++) {
+			if (!playerSplitHands[i].getFinished()) {
+				Hand nextSplitHand = playerSplitHands[i];
+				playerSplitHands[i] = currentPlayerHand;
+				Animation.Translate(nextSplitHand, playerSplitCardPanes[i], currentPlayerHandPane);
+				Animation.Scale(nextSplitHand, nextSplitHand.getCurrentScale(), nextSplitHand.getDefaultScale());
+				Animation.Translate(currentPlayerHand, currentPlayerHandPane, playerSplitCardPanes[i], () -> playerHit());				
+				Animation.Scale(currentPlayerHand, currentPlayerHand.getCurrentScale(), currentPlayerHand.getSplitScale());
 				currentPlayerHand = nextSplitHand;
 				playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-				currentPlayerHand.resetScale();
-				Routine.doAfter(() -> {
-					hitHand(currentPlayerHand);
-					playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-					checkPlayerHand();
-				}, 500);				
+				playerHandDisplay.setStatusLabel("");
 				return;
 			}
 		}
@@ -297,18 +258,31 @@ public class BlackjackMatch {
 	private void playDealer() {
 		blackjackScene.hideMatchOptions();
 		revealDealerCard();
-		if (currentPlayerHand.getHandValue() <= 21) dealerHits();
-		else Routine.doAfter(() -> compareHands(), 1000);
+		if (splitHandCount > 0) {
+			for (Hand hand : playerSplitHands) {
+				if (hand == null) continue;
+				if (!hand.busted()) {
+					dealerHits();
+					return;
+				}
+			}			
+		}
+		if (!currentPlayerHand.busted()) {
+			dealerHits();
+		}
+		else Routine.doAfter(() -> compareHands(), 1);
 	}
 	
-	private Card hitHand(Hand hand) {
+	private Card hitHand(Hand hand, HandDisplay display) {
 		Card card = deck.getCard();
-		hand.addCardToHand(card);
+		hand.addCardToHand(card);	
+		Action endAction = () -> display.setHandLabel(Integer.toString(hand.getHandValue()));
+		Animation.Translate(card, blackjackScene.getDeckPane(), hand.getNode(), endAction);
 		return card;
 	}
 	
-	private void hitHand(Hand hand, boolean faceDown) {
-		Card card = hitHand(hand);
+	private void hitHand(Hand hand, HandDisplay display, boolean faceDown) {
+		Card card = hitHand(hand, display);
 		card.setFaceDown(faceDown);
 	}
 	
@@ -318,8 +292,9 @@ public class BlackjackMatch {
 	}
 	
 	private void revealDealerCard() {
-		dealerHand.getCards().get(0).setFaceDown(false);
-		dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
+		Action flipCard = () -> dealerHand.getCards().get(0).flipCardUp();
+		Action updateDisplay = () -> dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
+		Routine.onStartAndFinish(flipCard, updateDisplay, Animation.CARD_TRANSLATE_TIME);	
 	}
 	
 	/**
@@ -328,39 +303,37 @@ public class BlackjackMatch {
 	 */
 	private void dealerHits() {
 		// The event(s) to perform on each iteration of the routine.
-		Action action = () -> {
-			hitHand(dealerHand);
-			dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
-		};
+		Action action = () -> hitHand(dealerHand, dealerHandDisplay);
+		
 		// The boolean condition that ends the routine.
 		Conditional endCondition = () -> dealerHand.getHandValue() >= DEALER_HIT_STOP;
 		
 		// The event(s) to perform at the end of the routine.
 		Action endAction = () -> compareHands();
-		Routine.doRepeatOnCondition(action, 1000, endCondition, endAction);
+		Routine.doRepeatOnCondition(action, 1, endCondition, endAction);
 	}
 	
 	private void compareHands() {	
-		int playerHandValue = currentPlayerHand.getHandValue();
-		int dealerHandValue = dealerHand.getHandValue();
 		displayHandStatus(currentPlayerHand, playerHandDisplay);
 		displayHandStatus(dealerHand, dealerHandDisplay);
 		
 		Routine.doAfter(() -> {
-			if (playerHandValue > 21) {  // The player busts.
+			if (currentPlayerHand.busted()) {  // The player busts.
 				matchResult = MatchResult.Loss;
 			}
 			
 			// The player did not bust, and their hand value is between 1-21.
-			else if (dealerHandValue > 21) {  // The dealer busts.
-				if (playerHandValue == 21 && currentPlayerHand.getSize() == 2) matchResult = MatchResult.Blackjack;
+			else if (dealerHand.busted()) {  // The dealer busts.
+				if (currentPlayerHand.hasNaturalBlackjack()) matchResult = MatchResult.Blackjack;
 				else matchResult = MatchResult.Won;
 			}
 			
 			// The player and dealer did not bust, and their hands are between 1-21.
 			else {
+				int playerHandValue = currentPlayerHand.getHandValue();
+				int dealerHandValue = dealerHand.getHandValue();
 				if (playerHandValue > dealerHandValue) {
-					if (playerHandValue == 21 && currentPlayerHand.getSize() == 2) matchResult = MatchResult.Blackjack;
+					if (currentPlayerHand.hasNaturalBlackjack()) matchResult = MatchResult.Blackjack;
 					else matchResult = MatchResult.Won;
 				}
 				else if (playerHandValue == dealerHandValue) matchResult = MatchResult.Push;
@@ -370,13 +343,13 @@ public class BlackjackMatch {
 			blackjackScene.setMatchResultText(matchResult.toString());		
 			adjustPlayerBalance(matchResult);
 			playOtherPlayerHands();
-		}, 1500);
+		}, 1.5f);
 		
 	}
 	
 	private void adjustPlayerBalance(MatchResult result) {
 		double payout = 0;
-		double insurancePayout = insuranceBet + (insuranceBet * 2);
+		double insurancePayout = currentPlayerHand.getInsuranceBet() + (currentPlayerHand.getInsuranceBet() * 2);
 		if (result == MatchResult.Blackjack) payout = (int) (2.5f * currentPlayerHand.getBet());
 		else if (result == MatchResult.Won) payout = 2 * currentPlayerHand.getBet();
 		else if (result == MatchResult.Push) payout = currentPlayerHand.getBet() + insurancePayout;
@@ -387,8 +360,8 @@ public class BlackjackMatch {
 			DatabaseManager DBM = DatabaseManager.getInstance();
 			// When the player wins, they earn more money than they bet since they earn their money back plus extra. 
 			// So, if their payout exceeds the bet, they have earned money. Otherwise, they have lost money.
-			if (playerBet < payout) DBM.insertWinnings(player.getUsername(), payout - currentPlayerHand.getBet());
-			else if (playerBet > payout) DBM.insertLosses(player.getUsername(), currentPlayerHand.getBet());
+			if (currentPlayerHand.getBet() < payout) DBM.insertWinnings(player.getUsername(), payout - currentPlayerHand.getBet());
+			else if (currentPlayerHand.getBet() > payout) DBM.insertLosses(player.getUsername(), currentPlayerHand.getBet());
 			DBM.setUserBankBalance(player.getUsername(), player.getBalance());
 		}
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
@@ -396,46 +369,45 @@ public class BlackjackMatch {
 	
 	private void playOtherPlayerHands() {
 		playerHandDisplay.setStatusLabel("");
-		if (playerSplitHands.size() == 0) {
-			dealerHandDisplay.setStatusLabel("");
-			blackjackScene.showEndMatchOptions(player.getBalance() <= 0);
+		if (splitHandCount == 0) {
+			Routine.doAfter(() -> {  // Wait, then show exit options.
+				dealerHandDisplay.setStatusLabel("");
+				blackjackScene.showEndMatchOptions(player.getBalance() <= 0);				
+			}, 1);
 			return;
 		}
-		
-		Timeline timeline = new Timeline();
-		int startTime = 500;
-		int increment = 300;
-		int duration = increment;
-		
-		// Move the current hand off the board
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
+			
+		// Reset match results and player hand display.
+		Action hideResults = () -> {
 			blackjackScene.setMatchResultText("");
 			playerHandDisplay.setHandLabel("");
-			currentPlayerHand.setPosition(blackjackScene.getRemovedCardPane());
-		}));
-		duration += increment;
+		};
 		
-		// Get the next split hand and place it in the center
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			currentPlayerHand = playerSplitHands.get(0);
-			playerSplitHands.remove(0);
-			currentPlayerHand.setPosition(currentPlayerHandPane);
-			currentPlayerHand.resetScale();
-		}));
-		duration += increment;
+		// Move the current hand off the board and get the next split hand and place it in the center.
+		Action moveHands = () -> {
+			int index = 0;
+			for (int i = 0; i < playerSplitHands.length; i++) {
+				if (playerSplitHands[i] != null) {
+					index = i;
+					break;
+				}
+			}			
+			Hand nextHand = playerSplitHands[index];
+			Animation.Translate(nextHand, playerSplitCardPanes[index], currentPlayerHandPane);
+			Animation.Scale(nextHand, nextHand.getCurrentScale(), nextHand.getDefaultScale());
+			Animation.Translate(currentPlayerHand, currentPlayerHandPane, blackjackScene.getRemovedCardPane());	
+			currentPlayerHand = nextHand;
+			playerSplitHands[index] = null;
+			splitHandCount--;
+		};
 		
-		// Update the hand display
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
+		// Update the player hand display.
+		Action updateDislay = () -> {
 			playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-		}));
-		duration += increment;
+		};
 		
-		// Compare the hands
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(duration), event -> {
-			compareHands();			
-		}));
-		
-		timeline.setDelay(Duration.millis(startTime));
-		timeline.play();
+		Action[] actions = new Action[] { hideResults, moveHands, updateDislay, () -> compareHands() };
+		float increment = 0.3f;
+		Routine.doAfter(() -> Routine.doActionList(increment, actions), 1);
 	}
 }

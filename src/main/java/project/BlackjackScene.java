@@ -3,9 +3,12 @@ package project;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 /**
  * Extends the {@code SceneController} and manages the 
@@ -15,6 +18,7 @@ import javafx.scene.layout.StackPane;
 public class BlackjackScene extends SceneController {
 
 	@FXML private Pane boardPane;
+	@FXML private Pane deckPane;
 	@FXML private Pane removedCardPane;
 	
 	@FXML private Button placeBetButton;	
@@ -23,14 +27,13 @@ public class BlackjackScene extends SceneController {
 	@FXML private HBox endMatchHBox;
 	
 	@FXML private Label playerBankLabel;	
-	@FXML private Label playerBetLabel;	
+	@FXML private Label playerBetLabel;
 	
 	@FXML private Button hitButton;	
 	@FXML private Button doubleBetButton;	
 	@FXML private Button standButton;	
 	@FXML private Button splitButton;	
 	@FXML private Button insuranceButton;	
-	@FXML private Button evenMoneyButton;	
 	
 	@FXML private Pane playerCardPane;
 	@FXML private Pane playerSplitPane1;
@@ -69,6 +72,10 @@ public class BlackjackScene extends SceneController {
 		return matchResultsLabel;
 	}
 	
+	public Pane getDeckPane() {
+		return deckPane;
+	}
+	
 	public Pane getRemovedCardPane() {
 		return removedCardPane;
 	}
@@ -90,7 +97,6 @@ public class BlackjackScene extends SceneController {
 		standButton.setVisible(false);
 		splitButton.setVisible(false);
 		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
 	}
 	
 	/**
@@ -99,8 +105,8 @@ public class BlackjackScene extends SceneController {
 	 */
 	public void setup() {
 		Player player = Player.getInstance();
-		playerBankLabel.setText("Bank: $" + (player.getBalance()));
-		playerBetLabel.setText("Bet: $" + Double.toString(player.getBet()));
+		setPlayerBankLabel(Double.toString(player.getBalance()));
+		setPlayerBetLabel(Double.toString(player.getBet()));
 		HandDisplay playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
 		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);		
 		blackjackMatch = new BlackjackMatch(this, playerHandDisplay, dealerHandDisplay);
@@ -113,8 +119,56 @@ public class BlackjackScene extends SceneController {
 		doubleBetButton.setVisible(canDouble);
 		standButton.setVisible(true);
 		splitButton.setVisible(canSplit);
-		if (allowEvenMoney) evenMoneyButton.setVisible(true);
-		else if (allowInsurance) insuranceButton.setVisible(true);
+		insuranceButton.setVisible(allowEvenMoney || allowInsurance);
+		if (allowEvenMoney) {
+			insuranceButton.setText("Even Money");
+		}
+		else if (allowInsurance) {
+			insuranceButton.setText("Insurance");
+		}
+		matchHBox.setDisable(false);
+	}
+	
+	public void setMatchOptionsEnabled(boolean enabled) {
+		matchHBox.setDisable(!enabled);
+		if (!enabled) resetButtonEffects();
+	}
+	
+	public void showBestOption(Hand playerHand, Hand dealerHand) {
+		resetButtonEffects();
+		BestChoice choice = OddsGenerator.getInstance().getBestChoice(playerHand, dealerHand);
+		switch (choice) {
+			case Hit:
+				highlightButton(hitButton);
+				break;
+			case Stand:
+				highlightButton(standButton);
+				break;
+			case Double:
+				highlightButton(doubleBetButton);
+				break;
+			case Split:
+				highlightButton(splitButton);
+				break;	
+		}		
+	}
+	
+	private void highlightButton(Button button) {
+		if (!button.isVisible()) return;
+		DropShadow dropShadow = new DropShadow();
+		dropShadow.setBlurType(BlurType.GAUSSIAN);
+		dropShadow.setWidth(50);
+		dropShadow.setHeight(50);
+		dropShadow.setSpread(0.5);
+		dropShadow.setColor(Color.WHITE);
+		button.setEffect(dropShadow);
+	}
+	
+	private void resetButtonEffects() {
+		hitButton.setEffect(null);
+		standButton.setEffect(null);
+		doubleBetButton.setEffect(null);
+		splitButton.setEffect(null);
 	}
 	
 	public void hideMatchOptions() {
@@ -123,12 +177,6 @@ public class BlackjackScene extends SceneController {
 		standButton.setVisible(false);
 		splitButton.setVisible(false);
 		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
-	}
-	
-	public void hideInsuranceOptions() {
-		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
 	}
 	
 	public void showSplitButton(boolean canSplit) {
@@ -137,25 +185,29 @@ public class BlackjackScene extends SceneController {
 	
 	@FXML
 	private void onHitButtonPressed() {
+		setMatchOptionsEnabled(false);
 		doubleBetButton.setVisible(false);
-		hideInsuranceOptions();
+		insuranceButton.setVisible(false);
 		blackjackMatch.playerHit();
 	}
 	
 	@FXML
 	private void onDoubleButtonPressed() {
+		setMatchOptionsEnabled(false);
 		doubleBetButton.setVisible(false);
-		hideInsuranceOptions();
+		insuranceButton.setVisible(false);
 		blackjackMatch.doublePlayerBet();
 	}
 	
 	@FXML
 	private void onStandButtonPressed() {
-		blackjackMatch.playerStand();
+		setMatchOptionsEnabled(false);
+		blackjackMatch.finishPlayerHand();
 	}
 	
 	@FXML
 	private void onSplitButtonPressed() {
+		setMatchOptionsEnabled(false);
 		splitButton.setVisible(false);
 		blackjackMatch.playerSplit();
 	}
@@ -163,14 +215,6 @@ public class BlackjackScene extends SceneController {
 	@FXML
 	private void oninsuranceButtonPressed() {
 		insuranceButton.setVisible(false);
-		matchHBox.setVisible(false);
-		blackjackMatch.useInsurance();
-	}
-	
-	@FXML
-	private void onEvenMoneyButtonPressed() {
-		evenMoneyButton.setVisible(false);
-		matchHBox.setVisible(false);
 		blackjackMatch.useInsurance();
 	}
 	
@@ -179,7 +223,8 @@ public class BlackjackScene extends SceneController {
 		Routine.doAfter(() -> { 
 			insuranceLostLabel.setVisible(false); 
 			matchHBox.setVisible(true);
-		}, 2000);
+			setMatchOptionsEnabled(true);
+		}, 2);
 	}
 	
 	public void setPlayerBankLabel(String text) {
@@ -187,7 +232,7 @@ public class BlackjackScene extends SceneController {
 	}
 	
 	public void setPlayerBetLabel(String text) {
-		playerBetLabel.setText("Bet: $" + text);
+		playerBetLabel.setText("$" + text.replace(".0", ""));
 	}
 	
 	public void setMatchResultText(String matchResult) {
@@ -213,7 +258,7 @@ public class BlackjackScene extends SceneController {
 				text += "\n\nAn anonymous donor\nhas gifted you $" + Player.START_BALANCE + ".";
 				gameOverText.setText(text);
 				gameOverPane.toFront();
-			}, 2000);			
+			}, 2);			
 		}
 	}
 	

@@ -59,7 +59,7 @@ public class DatabaseManager {
 		try {
 			Statement test = connection.createStatement();
 			ResultSet rs  = test.executeQuery(sql);
-			if (rs.next()) {  // The table already exists			
+			if (rs.next()) {  // The table already exists.	
 				test.close();
 				return;
 			}

@@ -23,7 +23,7 @@ import java.util.Base64;
 public class PasswordHandler {
 
 	// Note: Hard-coding a secret key and salt is generally unsafe and should 
-	// be avoided if software security is a concern.
+	// be avoided whenever software security is a concern.
 	private static final String SECRET_KEY = "MySecretKey";
 	private static final String SALT = "MySalt";
 	private static final int KEY_LENGTH = 256;

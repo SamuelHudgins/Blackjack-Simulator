@@ -59,8 +59,7 @@ public class DeleteScene extends SceneController {
 		if (!isValid) return;
 		
 		String username = usernameField.getText();
-		DatabaseManager DBM = DatabaseManager.getInstance();
-		DBM.removeUser(username);
+		DatabaseManager.getInstance().removeUser(username);
 		Player.remove();
 		switchToRegistrationScene();
 	}

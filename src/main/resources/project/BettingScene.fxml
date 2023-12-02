@@ -16,11 +16,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" stylesheets="@/css/betSlider.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BettingScene">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" stylesheets="@../css/betSlider.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BettingScene">
    <children>
       <ImageView fitHeight="650.0" fitWidth="1200.0" nodeOrientation="INHERIT" pickOnBounds="true">
          <image>
-            <Image url="@/images/Green_Felt.png" />
+            <Image url="@../images/Green_Felt.png" />
          </image>
       </ImageView>
       <Button alignment="CENTER" contentDisplay="CENTER" layoutX="503.0" layoutY="453.0" mnemonicParsing="false" onAction="#switchToBlackjackScene" prefHeight="100.0" prefWidth="182.0" text="Deal" textAlignment="CENTER">

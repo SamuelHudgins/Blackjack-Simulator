@@ -16,7 +16,6 @@ public class MainApp extends Application {
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource(Scenes.START.toPath()));
 			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getResource("/css/betSlider.css").toExternalForm());
 			SceneController.setStage(startStage);
 			startStage.setScene(scene);
 			startStage.setTitle("Blackjack Simulator");
@@ -34,7 +33,6 @@ public class MainApp extends Application {
 		DBM.createWinsTable();
 		DBM.createLossesTable();
 		launch(args);	
-		DBM.closeConnection();		
+		DBM.closeConnection();	
 	}
-
 }

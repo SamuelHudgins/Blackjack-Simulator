@@ -25,7 +25,7 @@ public class BettingScene extends SceneController {
 	@FXML private Text accountEmptyText;
 	
 	@FXML
-	private void initialize() { // Called when this controller's FXML file loads
+	private void initialize() {  // Called when this controller's FXML file loads
 		betSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
