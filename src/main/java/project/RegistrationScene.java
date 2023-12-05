@@ -3,14 +3,16 @@ package project;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
  * This class extends the {@code SceneController} and manages the GUI events 
  * for the account registration scene.
  */
-public class RegistrationScene extends SceneController {
+public final class RegistrationScene extends SceneController implements IAccountScenes {
 	
+	@FXML private VBox registrationPane;
 	@FXML private TextField usernameField;
 	@FXML private Text usernameErrorLabel;
 	
@@ -23,6 +25,7 @@ public class RegistrationScene extends SceneController {
 	@FXML
 	private void initialize() {
 		resetErrorLabels();
+		if (Player.exists()) addBackButton(registrationPane, this);
 	}
 	
 	private void resetErrorLabels() {

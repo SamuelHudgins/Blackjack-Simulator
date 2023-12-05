@@ -13,15 +13,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="boardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BlackjackScene">
+<AnchorPane fx:id="boardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BlackjackScene">
    <children>
       <StackPane prefHeight="650.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <ImageView fitHeight="658.0" fitWidth="1204.0" pickOnBounds="true" StackPane.alignment="CENTER">
                <image>
-                  <Image url="@../images/Green_Felt.png" />
+                  <Image url="@../images/Blackjack%20Board%20(with%20text).png" />
                </image>
             </ImageView>
             <GridPane alignment="CENTER" prefHeight="525.0" prefWidth="747.0">
@@ -38,47 +39,60 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <VBox alignment="TOP_RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                  <VBox alignment="TOP_RIGHT" maxWidth="-Infinity" minWidth="-Infinity" spacing="10.0" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                      <GridPane.margin>
-                        <Insets right="50.0" />
+                        <Insets right="75.0" />
                      </GridPane.margin>
                      <children>
-                        <Label fx:id="playerStatusLabel" alignment="CENTER" contentDisplay="CENTER" text="Player" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="playerHandLabel" text="0" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="48.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="250.0" spacing="15.0">
+                           <children>
+                              <Label text="Player" textFill="#00fc00">
+                                 <font>
+                                    <Font name="System Italic" size="27.0" />
+                                 </font>
+                              </Label>
+                              <StackPane>
+                                 <children>
+                                    <Circle fill="#00000026" radius="35.0" stroke="#d4d4d4" strokeType="INSIDE" />
+                                    <Label fx:id="playerHandLabel" text="00" textAlignment="CENTER" textFill="WHITE">
+                                       <font>
+                                          <Font size="35.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
-                  <VBox alignment="TOP_RIGHT" GridPane.halignment="RIGHT">
+                  <VBox alignment="TOP_RIGHT" maxWidth="-Infinity" minWidth="-Infinity" GridPane.halignment="RIGHT">
                      <GridPane.margin>
-                        <Insets right="50.0" />
+                        <Insets right="75.0" />
                      </GridPane.margin>
                      <children>
-                        <Label fx:id="dealerHandLabel" text="0" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="48.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="dealerStatusLabel" alignment="CENTER" contentDisplay="CENTER" text="Dealer" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="250.0" spacing="15.0">
+                           <children>
+                              <Label text="Dealer" textFill="#00fc00">
+                                 <font>
+                                    <Font name="System Italic" size="27.0" />
+                                 </font>
+                              </Label>
+                              <StackPane>
+                                 <children>
+                                    <Circle fill="#00000026" radius="35.0" stroke="#d4d4d4" strokeType="INSIDE" />
+                                    <Label fx:id="dealerHandLabel" text="00" textAlignment="CENTER" textFill="WHITE">
+                                       <font>
+                                          <Font size="35.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                   <StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="90.0" prefWidth="374.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="matchResultsLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="70.0" prefWidth="308.0" text="Hand result" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="43.0" />
-                           </font>
-                        </Label>
                         <Label fx:id="insuranceLostLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="474.0" text="Dealer does not have Blackjack&#10;Insurance Lost" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="26.0" />
@@ -94,87 +108,102 @@
                      <GridPane.margin>
                         <Insets left="50.0" right="50.0" />
                      </GridPane.margin></Pane>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" GridPane.rowIndex="2">
+                  <VBox alignment="CENTER_RIGHT" maxWidth="-Infinity" prefHeight="200.0" prefWidth="140.0" spacing="20.0" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="splitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onSplitButtonPressed" prefHeight="40.0" prefWidth="150.0" text="Split" textAlignment="CENTER">
+                        <Button fx:id="splitButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onSplitButtonPressed" prefHeight="50.0" text="Split" textAlignment="CENTER">
                            <font>
-                              <Font size="25.0" />
+                              <Font size="20.0" />
                            </font>
                         </Button>
-                        <Button fx:id="hitButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onHitButtonPressed" prefHeight="40.0" prefWidth="150.0" text="Hit" textAlignment="CENTER">
+                        <Button fx:id="hitButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onHitButtonPressed" prefHeight="50.0" text="Hit" textAlignment="CENTER">
                            <font>
-                              <Font size="25.0" />
+                              <Font size="20.0" />
                            </font>
                         </Button>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <VBox alignment="CENTER_LEFT" maxWidth="-Infinity" prefHeight="200.0" prefWidth="140.0" spacing="20.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="insuranceButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#oninsuranceButtonPressed" prefHeight="40.0" prefWidth="150.0" text="Even Money" textAlignment="CENTER">
+                        <Button fx:id="insuranceButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#oninsuranceButtonPressed" prefHeight="50.0" text="Even Money" textAlignment="CENTER">
                            <font>
-                              <Font size="22.0" />
+                              <Font size="20.0" />
                            </font>
                         </Button>
-                        <Button fx:id="standButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onStandButtonPressed" prefHeight="40.0" prefWidth="150.0" text="Stand" textAlignment="CENTER">
+                        <Button fx:id="standButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#onStandButtonPressed" prefHeight="50.0" text="Stand" textAlignment="CENTER">
                            <font>
-                              <Font size="25.0" />
+                              <Font size="20.0" />
                            </font>
                         </Button>
                      </children>
                   </VBox>
-                  <Button fx:id="doubleBetButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onDoubleButtonPressed" prefHeight="40.0" prefWidth="150.0" text="Double" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Button fx:id="doubleBetButton" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#onDoubleButtonPressed" prefHeight="50.0" prefWidth="140.0" text="Double" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
-                        <Font size="25.0" />
+                        <Font size="20.0" />
                      </font>
                   </Button>
-                  <HBox fx:id="endMatchHBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="800.0" spacing="400.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Button fx:id="mainMenuButton" mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER">
-                           <font>
-                              <Font size="30.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#switchToBettingScene" text="Place Bet" textAlignment="CENTER">
-                           <font>
-                              <Font size="30.0" />
-                           </font>
-                        </Button>
-                     </children>
-                  </HBox>
-                  <StackPane GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <children>
-                        <ImageView fitHeight="102.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/Blue%20Chip.png" />
-                           </image>
-                        </ImageView>
-                        <Label fx:id="playerBetLabel" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" textFill="WHITE">
-                           <font>
-                              <Font size="23.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <GridPane.margin>
-                        <Insets bottom="25.0" />
-                     </GridPane.margin>
-                  </StackPane>
                </children>
                <StackPane.margin>
                   <Insets bottom="75.0" left="200.0" right="200.0" top="75.0" />
                </StackPane.margin>
             </GridPane>
+            <ImageView fx:id="vignetteImage" fitHeight="658.0" fitWidth="1204.0" mouseTransparent="true" pickOnBounds="true">
+               <image>
+                  <Image url="@../images/Vignette.png" />
+               </image>
+            </ImageView>
+            <HBox fx:id="endMatchHBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="800.0" spacing="400.0" visible="false">
+               <children>
+                  <Button fx:id="mainMenuButton" mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="placeBetButton" mnemonicParsing="false" onAction="#switchToBettingScene" text="Place Bet" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </StackPane>
-      <Label fx:id="playerBankLabel" layoutX="10.0" layoutY="590.0" text="Bank:" textFill="WHITE">
-         <font>
-            <Font size="30.0" />
-         </font>
-      </Label>
-      <StackPane layoutX="300.0" layoutY="548.0">
+      <VBox layoutX="15.0" layoutY="480.0" spacing="5.0">
          <children>
-            <HBox fx:id="matchHBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="600.0" spacing="15.0" translateX="-75.0" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="54.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Green%20Chip.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="playerInsuranceBetLabel" alignment="CENTER" contentDisplay="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="54.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Blue%20Chip.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="playerBetLabel" alignment="CENTER" contentDisplay="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Label fx:id="playerBankLabel" text="Bank:" textFill="WHITE">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
          </children>
-      </StackPane>
+      </VBox>
       <HBox layoutX="800.0" layoutY="500.0" prefHeight="166.0" prefWidth="349.0">
          <children>
             <VBox alignment="CENTER" prefHeight="254.0" prefWidth="139.0">
@@ -223,7 +252,7 @@
       <StackPane fx:id="gameOverPane" prefHeight="650.0" prefWidth="1200.0" visible="false">
          <children>
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgba(0, 0, 0, 0.75);" />
-            <Pane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="546.0" prefWidth="559.0" style="-fx-background-color: rgba(0, 0, 0, 0.75);">
+            <Pane id="uiPanel" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="546.0" prefWidth="559.0">
                <children>
                   <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="547.0" prefWidth="561.0" spacing="50.0">
                      <children>

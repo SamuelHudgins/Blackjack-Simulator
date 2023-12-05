@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+
+<StackPane fx:id="bannerPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" opacity="0.95" prefHeight="185.0" prefWidth="412.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MatchBanner">
+   <children>
+      <ImageView fx:id="blackjackImage" fitHeight="350.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Blackjack%20Banner.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="winImage" fitHeight="350.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Win%20Banner.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="bustImage" fitHeight="61.0" fitWidth="303.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Bust%20Banner.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="pushImage" fitHeight="59.0" fitWidth="304.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Push%20Banner.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="bannerLabel" text="Dealer Wins!" textAlignment="CENTER" textFill="WHITE">
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+   </children>
+</StackPane>

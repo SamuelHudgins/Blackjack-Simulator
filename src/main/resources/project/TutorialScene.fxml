@@ -11,14 +11,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.TutorialScene">
+<StackPane stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.TutorialScene">
    <children>
       <ImageView fitHeight="650.0" fitWidth="1200.0" pickOnBounds="true">
          <image>
-            <Image url="@/images/Green_Felt.png" />
+            <Image url="@../images/Blackjack%20Board.png" />
          </image>
       </ImageView>
-      <AnchorPane centerShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="611.0" scaleShape="false" style="-fx-background-color: rgba(0, 0, 0, 0.75);" StackPane.alignment="CENTER">
+      <AnchorPane id="uiPanel" centerShape="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="577.0" prefWidth="611.0" scaleShape="false" StackPane.alignment="CENTER">
          <children>
             <VBox alignment="CENTER" fillWidth="false" prefHeight="340.0" prefWidth="461.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -35,7 +35,10 @@
                            </padding></Label>
                      </content>
                   </ScrollPane>
-                  <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER" />
+                  <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Button>
                </children>
             </VBox>
          </children>

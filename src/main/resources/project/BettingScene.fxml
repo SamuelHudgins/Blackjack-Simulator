@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -9,6 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
@@ -16,70 +18,86 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" stylesheets="@../css/betSlider.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BettingScene">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.BettingScene">
    <children>
       <ImageView fitHeight="650.0" fitWidth="1200.0" nodeOrientation="INHERIT" pickOnBounds="true">
          <image>
-            <Image url="@../images/Green_Felt.png" />
+            <Image url="@../images/Blackjack%20Board%20(with%20text).png" />
          </image>
       </ImageView>
-      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="503.0" layoutY="453.0" mnemonicParsing="false" onAction="#switchToBlackjackScene" prefHeight="100.0" prefWidth="182.0" text="Deal" textAlignment="CENTER">
-         <font>
-            <Font size="40.0" />
-         </font>
-      </Button>
-      <Button layoutX="1050.0" layoutY="15.0" mnemonicParsing="false" onAction="#switchToMainMenuScene" text="Main Menu" textAlignment="CENTER">
-         <font>
-            <Font size="20.0" />
-         </font></Button>
-      <GridPane layoutY="134.0" prefHeight="316.0" prefWidth="800.0" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="134.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints maxHeight="75.33333333333333" minHeight="54.00002034505208" prefHeight="73.55557759602864" vgrow="ALWAYS" />
-            <RowConstraints fillHeight="false" maxHeight="100.66664632161458" minHeight="10.0" prefHeight="81.11108907063802" vgrow="NEVER" />
-            <RowConstraints fillHeight="false" maxHeight="104.33334350585938" minHeight="10.0" prefHeight="78.4444580078125" vgrow="NEVER" />
-            <RowConstraints fillHeight="false" maxHeight="141.77777099609375" minHeight="10.0" prefHeight="83.11112467447916" vgrow="NEVER" />
-         </rowConstraints>
+      <AnchorPane id="uiPanel" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="510.0" prefWidth="920.0" StackPane.alignment="CENTER">
          <children>
-            <Slider fx:id="betSlider" blockIncrement="1.0" majorTickUnit="100.0" prefHeight="128.0" prefWidth="498.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label fx:id="betLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="88.0" prefWidth="441.0" text="0" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
-               <font>
-                  <Font size="45.0" />
-               </font>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" text="\$1" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-               <font>
-                  <Font size="35.0" />
-               </font>
-            </Label>
-            <Label fx:id="maxBetLabel" alignment="CENTER" contentDisplay="CENTER" text="1000" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-               <font>
-                  <Font size="35.0" />
-               </font>
-            </Label>
-            <Label text="Bet" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-               <font>
-                  <Font size="45.0" />
-               </font>
-            </Label>
-            <Label fx:id="bankLabel" text="Bank:" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-               <font>
-                  <Font size="35.0" />
-               </font>
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-            </Label>
+            <GridPane alignment="CENTER" prefHeight="316.0" prefWidth="722.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="75.33333333333333" minHeight="54.00002034505208" prefHeight="73.55557759602864" vgrow="ALWAYS" />
+                  <RowConstraints fillHeight="false" maxHeight="100.66664632161458" minHeight="10.0" prefHeight="81.11108907063802" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" maxHeight="104.33334350585938" minHeight="10.0" prefHeight="78.4444580078125" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" maxHeight="141.77777099609375" minHeight="10.0" prefHeight="83.11112467447916" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" maxHeight="141.77777099609375" minHeight="10.0" prefHeight="83.11112467447916" vgrow="NEVER" />
+               </rowConstraints>
+               <children>
+                  <Slider fx:id="betSlider" blockIncrement="1.0" majorTickUnit="100.0" prefHeight="94.0" prefWidth="367.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label fx:id="betLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="88.0" prefWidth="441.0" text="0" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="45.0" />
+                     </font>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" text="\$1" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="maxBetLabel" alignment="CENTER" contentDisplay="CENTER" text="1000" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                     <font>
+                        <Font size="25.0" />
+                     </font>
+                  </Label>
+                  <Label text="Bet" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="45.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="bankLabel" text="Bank:" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                     <font>
+                        <Font size="35.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Label>
+                  <HBox alignment="CENTER" spacing="60.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#switchToMainMenuScene" prefWidth="170.0" text="Main Menu" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToBlackjackScene" prefWidth="170.0" text="Deal" textAlignment="CENTER">
+                           <font>
+                              <Font size="25.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <GridPane.margin>
+                        <Insets top="60.0" />
+                     </GridPane.margin>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" />
+               </padding>
+            </GridPane>
          </children>
-      </GridPane>
-      <StackPane fx:id="accountEmptyPane" layoutX="10.0" layoutY="10.0" prefHeight="650.0" prefWidth="1200.0" visible="false">
+      </AnchorPane>
+      <StackPane fx:id="accountEmptyPane" prefHeight="650.0" prefWidth="1200.0" visible="false">
          <children>
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgba(0, 0, 0, 0.75);" />
-            <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="464.0" prefWidth="559.0" style="-fx-background-color: rgba(0, 0, 0, 0.75);">
+            <Pane id="uiPanel" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="464.0" prefWidth="559.0">
                <children>
                   <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="358.0" prefWidth="561.0" spacing="50.0">
                      <children>
@@ -108,4 +126,8 @@
          </children>
       </StackPane>
    </children>
-</AnchorPane>
+   <stylesheets>
+      <URL value="@../css/styles.css" />
+      <URL value="@../css/betSlider.css" />
+   </stylesheets>
+</StackPane>

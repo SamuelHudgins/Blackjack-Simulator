@@ -3,14 +3,16 @@ package project;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
  * This class extends the {@code SceneController} and manages the GUI events for 
  * the login scene.
  */
-public class LoginScene extends SceneController {
+public final class LoginScene extends SceneController implements IAccountScenes {
 	
+	@FXML private VBox loginPane;
 	@FXML private TextField usernameField;	
 	@FXML private PasswordField passwordField;
 	@FXML private Text errorLabel;
@@ -18,6 +20,7 @@ public class LoginScene extends SceneController {
 	@FXML
 	private void initialize() {
 		errorLabel.setText("");
+		if (Player.exists()) addBackButton(loginPane, this);
 	}
 	
 	// Scene control methods

@@ -4,18 +4,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
  * This class extends the {@code SceneController} and manages the GUI 
  * events for the delete account scene.
  */
-public class DeleteScene extends SceneController {
+public final class DeleteScene extends SceneController implements IAccountScenes {
 
-	@FXML private TextField usernameField;
-	
-	@FXML private PasswordField passwordField;
-	
+	@FXML private VBox deletePane;
+	@FXML private TextField usernameField;	
+	@FXML private PasswordField passwordField;	
 	@FXML private TextField deleteField;
 	@FXML private Text deleteErrorText;
 	@FXML private Label errorLabel;
@@ -23,6 +23,7 @@ public class DeleteScene extends SceneController {
 	@FXML
 	private void initialize() {
 		resetErrorLabels();
+		if (Player.exists()) addBackButton(deletePane, this);
 	}
 	
 	private void resetErrorLabels() {
@@ -44,6 +45,12 @@ public class DeleteScene extends SceneController {
 		return null;
 	}
 	
+	@FXML
+	protected RegistrationScene switchToRegistrationScene() {
+		super.switchToRegistrationScene();
+		return null;
+	}
+	
 	// Button Methods
 	@FXML
 	private void onSubmitButtonPressed() {
@@ -53,7 +60,7 @@ public class DeleteScene extends SceneController {
 			errorLabel.setText("Incorrect username or password.");
 		}
 		if (!deleteField.getText().toLowerCase().equals("delete")) {
-			deleteErrorText.setText("Please enter \"delete\".");
+			deleteErrorText.setText("Please type \"delete\"");
 			isValid = false;
 		}
 		if (!isValid) return;

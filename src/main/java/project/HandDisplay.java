@@ -3,24 +3,17 @@ package project;
 import javafx.scene.control.Label;
 
 /**
- * Holds the references to GUI elements used for displaying hand values and statuses.
+ * Holds the references to the GUI element used for displaying a hand's value.
  */
 public class HandDisplay {
 	
-	private Label handLabel;        
-	private Label statusLabel;      
+	private Label handLabel;         
 	
-	public HandDisplay(Label handLabel, Label statusLabel) {
+	public HandDisplay(Label handLabel) {
 		this.handLabel = handLabel;
-		this.statusLabel = statusLabel;
-		this.statusLabel.setText("");
 	}
 	
 	public void setHandLabel(String value) {
 		handLabel.setText(value);
-	}
-	
-	public void setStatusLabel(String value) {
-		statusLabel.setText(value);
 	}
 }

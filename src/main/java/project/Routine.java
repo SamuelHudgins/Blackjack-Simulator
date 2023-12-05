@@ -36,8 +36,7 @@ public class Routine {
 			action.invoke();
 		}));
 		timeline.play();
-	}
-	
+	}	
 	
 	/**
 	 * Invokes the specified start action(s) followed by the specified ending actions 
@@ -74,8 +73,7 @@ public class Routine {
 		}));
 		timeline.play();
 	}
-	
-	
+		
 	/**
 	 * Invokes the specified set of actions at the specified intervals of time.
 	 * @param period The time in seconds to wait before calling successive actions.

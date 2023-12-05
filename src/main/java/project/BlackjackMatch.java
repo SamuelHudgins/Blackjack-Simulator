@@ -28,19 +28,8 @@ public class BlackjackMatch {
 	private HandDisplay dealerHandDisplay;	
 	private final int DEALER_HIT_STOP = 17;
 	
-	private enum MatchResult {
-		Push("Push"), Loss("Dealer Wins!"), Won("You Win!"), Blackjack("You Win!");
-		private final String stringValue;
-
-		MatchResult(final String s) {
-			stringValue = s;
-		}
-
-		public String toString() {
-			return stringValue;
-		}
-	}
-	MatchResult matchResult;
+	MatchResult playerMatchResult;
+	MatchResult dealerMatchResult;
 	
 	public BlackjackMatch(BlackjackScene scene, HandDisplay playerHandDisplay, HandDisplay dealerHandDisplay) {		
 		player = Player.getInstance();
@@ -52,7 +41,8 @@ public class BlackjackMatch {
 	
 	public void start(Pane boardPane, Pane[] playerCardPanes, Pane dealerCardPane) {
 		this.boardPane = boardPane;
-		deck = new Deck(blackjackScene.getDeckPane(), boardPane);		
+		deck = new Deck(blackjackScene.getDeckPane(), boardPane);	
+		blackjackScene.setPlayerInsuranceBetLabel(Double.toString(0));
 		currentPlayerHand = GameObject.Instantiate("Hand.fxml");
 		currentPlayerHand.setParentPane(this.boardPane);
 		currentPlayerHand.setSceneNode(this.boardPane);
@@ -202,6 +192,7 @@ public class BlackjackMatch {
 		player.adjustBalance(-insuranceBet);
 		currentPlayerHand.setInsuranceBet(insuranceBet);
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
+		blackjackScene.setPlayerInsuranceBetLabel(Double.toString(insuranceBet));
 		checkPlayerHand();
 	}
 	
@@ -211,11 +202,11 @@ public class BlackjackMatch {
 	 */
 	private void checkPlayerHand() {
 		if (currentPlayerHand.hasNaturalBlackjack()) {
-			playerHandDisplay.setStatusLabel("Blackjack!");
+			blackjackScene.showPlayerBanner(MatchResult.Blackjack);
 			currentPlayerHand.setFinished(true);
 		}
 		else if (currentPlayerHand.busted()) {
-			playerHandDisplay.setStatusLabel("Bust");
+			blackjackScene.showPlayerBanner(MatchResult.Bust);
 			currentPlayerHand.setFinished(true);
 		}
 		boolean canHit = canHit();
@@ -248,7 +239,7 @@ public class BlackjackMatch {
 				Animation.Scale(currentPlayerHand, currentPlayerHand.getCurrentScale(), currentPlayerHand.getSplitScale());
 				currentPlayerHand = nextSplitHand;
 				playerHandDisplay.setHandLabel(Integer.toString(currentPlayerHand.getHandValue()));
-				playerHandDisplay.setStatusLabel("");
+				blackjackScene.hidePlayerBanner();
 				return;
 			}
 		}
@@ -285,12 +276,7 @@ public class BlackjackMatch {
 		Card card = hitHand(hand, display);
 		card.setFaceDown(faceDown);
 	}
-	
-	private void displayHandStatus(Hand hand, HandDisplay handDisplay) {
-		if (hand.hasNaturalBlackjack()) handDisplay.setStatusLabel("Blackjack!");
-		else if (hand.busted()) handDisplay.setStatusLabel("Bust");
-	}
-	
+		
 	private void revealDealerCard() {
 		Action flipCard = () -> dealerHand.getCards().get(0).flipCardUp();
 		Action updateDisplay = () -> dealerHandDisplay.setHandLabel(Integer.toString(dealerHand.getHandValue()));
@@ -313,19 +299,21 @@ public class BlackjackMatch {
 		Routine.doRepeatOnCondition(action, 1, endCondition, endAction);
 	}
 	
-	private void compareHands() {	
-		displayHandStatus(currentPlayerHand, playerHandDisplay);
-		displayHandStatus(dealerHand, dealerHandDisplay);
+	private void compareHands() {			
+		if (dealerHand.hasNaturalBlackjack()) blackjackScene.showDealerBanner(MatchResult.Blackjack);
+		else if (dealerHand.busted()) blackjackScene.showDealerBanner(MatchResult.Bust);
 		
 		Routine.doAfter(() -> {
 			if (currentPlayerHand.busted()) {  // The player busts.
-				matchResult = MatchResult.Loss;
+				playerMatchResult = MatchResult.Bust;
+				dealerMatchResult = MatchResult.Won;
 			}
 			
 			// The player did not bust, and their hand value is between 1-21.
 			else if (dealerHand.busted()) {  // The dealer busts.
-				if (currentPlayerHand.hasNaturalBlackjack()) matchResult = MatchResult.Blackjack;
-				else matchResult = MatchResult.Won;
+				dealerMatchResult = MatchResult.Bust;
+				if (currentPlayerHand.hasNaturalBlackjack()) playerMatchResult = MatchResult.Blackjack;
+				else playerMatchResult = MatchResult.Won;
 			}
 			
 			// The player and dealer did not bust, and their hands are between 1-21.
@@ -333,18 +321,24 @@ public class BlackjackMatch {
 				int playerHandValue = currentPlayerHand.getHandValue();
 				int dealerHandValue = dealerHand.getHandValue();
 				if (playerHandValue > dealerHandValue) {
-					if (currentPlayerHand.hasNaturalBlackjack()) matchResult = MatchResult.Blackjack;
-					else matchResult = MatchResult.Won;
+					dealerMatchResult = MatchResult.Loss;
+					if (currentPlayerHand.hasNaturalBlackjack()) playerMatchResult = MatchResult.Blackjack;
+					else playerMatchResult = MatchResult.Won;
 				}
-				else if (playerHandValue == dealerHandValue) matchResult = MatchResult.Push;
-				else matchResult = MatchResult.Loss;
+				else if (playerHandValue == dealerHandValue) {
+					playerMatchResult = MatchResult.Push;
+					dealerMatchResult = MatchResult.Push;
+				}
+				else {
+					playerMatchResult = MatchResult.Loss;
+					dealerMatchResult = MatchResult.Won;
+				}
 			}		
-			
-			blackjackScene.setMatchResultText(matchResult.toString());		
-			adjustPlayerBalance(matchResult);
+			if (playerMatchResult == MatchResult.Push) blackjackScene.showPushBanner();	
+			else blackjackScene.showMatchResults(playerMatchResult, dealerMatchResult);		
+			adjustPlayerBalance(playerMatchResult);
 			playOtherPlayerHands();
-		}, 1.5f);
-		
+		}, 1.5f);		
 	}
 	
 	private void adjustPlayerBalance(MatchResult result) {
@@ -353,7 +347,7 @@ public class BlackjackMatch {
 		if (result == MatchResult.Blackjack) payout = (int) (2.5f * currentPlayerHand.getBet());
 		else if (result == MatchResult.Won) payout = 2 * currentPlayerHand.getBet();
 		else if (result == MatchResult.Push) payout = currentPlayerHand.getBet() + insurancePayout;
-		else if (result == MatchResult.Loss) payout = insurancePayout;
+		else payout = insurancePayout;
 		
 		player.adjustBalance(payout);
 		if (!player.getGuest()) {
@@ -368,18 +362,16 @@ public class BlackjackMatch {
 	}
 	
 	private void playOtherPlayerHands() {
-		playerHandDisplay.setStatusLabel("");
 		if (splitHandCount == 0) {
 			Routine.doAfter(() -> {  // Wait, then show exit options.
-				dealerHandDisplay.setStatusLabel("");
-				blackjackScene.showEndMatchOptions(player.getBalance() <= 0);				
+				blackjackScene.showEndMatchOptions(player.getBalance() <= 1);				
 			}, 1);
 			return;
 		}
 			
 		// Reset match results and player hand display.
 		Action hideResults = () -> {
-			blackjackScene.setMatchResultText("");
+			blackjackScene.hideMatchResults();
 			playerHandDisplay.setHandLabel("");
 		};
 		

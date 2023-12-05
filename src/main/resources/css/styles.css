@@ -1,0 +1,26 @@
+.button { 
+	-fx-text-fill: white; 
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+	-fx-border-color: white;
+	-fx-border-radius: 10px;
+	-fx-background-radius: 10px;
+	-fx-background-color: linear-gradient(rgb(0, 200, 255), rgb(0, 150, 225));
+}
+
+.hyperlink:hover {
+	-fx-text-fill: rgb(50, 225, 255);
+}
+
+.button:hover {
+	-fx-background-color: linear-gradient(rgb(50, 200, 255), rgb(100, 200, 225));
+}
+
+#uiPanel {
+	-fx-background-color: rgba(0, 0, 0, 0.65);
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+	-fx-border-color: rgba(255, 255, 255, 0.6);
+	-fx-border-radius: 10px;
+	-fx-background-radius: 10px;
+}
