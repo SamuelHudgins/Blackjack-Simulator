@@ -344,7 +344,7 @@ public class BlackjackMatch {
 	private void adjustPlayerBalance(MatchResult result) {
 		double payout = 0;
 		double insurancePayout = currentPlayerHand.getInsuranceBet() + (currentPlayerHand.getInsuranceBet() * 2);
-		if (result == MatchResult.Blackjack) payout = (int) (2.5f * currentPlayerHand.getBet());
+		if (result == MatchResult.Blackjack) payout = 2.5f * currentPlayerHand.getBet();
 		else if (result == MatchResult.Won) payout = 2 * currentPlayerHand.getBet();
 		else if (result == MatchResult.Push) payout = currentPlayerHand.getBet() + insurancePayout;
 		else payout = insurancePayout;
