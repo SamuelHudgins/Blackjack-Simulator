@@ -193,6 +193,7 @@ public class BlackjackMatch {
 		currentPlayerHand.setInsuranceBet(insuranceBet);
 		blackjackScene.setPlayerBankLabel(Double.toString(player.getBalance()));
 		blackjackScene.setPlayerInsuranceBetLabel(Double.toString(insuranceBet));
+		DatabaseManager.getInstance().insertLosses(player.getUsername(), insuranceBet);
 		checkPlayerHand();
 	}
 	
@@ -306,14 +307,13 @@ public class BlackjackMatch {
 		Routine.doAfter(() -> {
 			if (currentPlayerHand.busted()) {  // The player busts.
 				playerMatchResult = MatchResult.Bust;
-				dealerMatchResult = MatchResult.Won;
+				dealerMatchResult = dealerHand.hasNaturalBlackjack() ? MatchResult.Blackjack : MatchResult.Won;
 			}
 			
 			// The player did not bust, and their hand value is between 1-21.
 			else if (dealerHand.busted()) {  // The dealer busts.
 				dealerMatchResult = MatchResult.Bust;
-				if (currentPlayerHand.hasNaturalBlackjack()) playerMatchResult = MatchResult.Blackjack;
-				else playerMatchResult = MatchResult.Won;
+				playerMatchResult = currentPlayerHand.hasNaturalBlackjack() ? MatchResult.Blackjack : MatchResult.Won;
 			}
 			
 			// The player and dealer did not bust, and their hands are between 1-21.
@@ -322,8 +322,7 @@ public class BlackjackMatch {
 				int dealerHandValue = dealerHand.getHandValue();
 				if (playerHandValue > dealerHandValue) {
 					dealerMatchResult = MatchResult.Loss;
-					if (currentPlayerHand.hasNaturalBlackjack()) playerMatchResult = MatchResult.Blackjack;
-					else playerMatchResult = MatchResult.Won;
+					playerMatchResult = currentPlayerHand.hasNaturalBlackjack() ? MatchResult.Blackjack : MatchResult.Won;
 				}
 				else if (playerHandValue == dealerHandValue) {
 					playerMatchResult = MatchResult.Push;
@@ -331,7 +330,7 @@ public class BlackjackMatch {
 				}
 				else {
 					playerMatchResult = MatchResult.Loss;
-					dealerMatchResult = MatchResult.Won;
+					dealerMatchResult = dealerHand.hasNaturalBlackjack() ? MatchResult.Blackjack : MatchResult.Won;
 				}
 			}		
 			if (playerMatchResult == MatchResult.Push) blackjackScene.showPushBanner();	
@@ -347,7 +346,7 @@ public class BlackjackMatch {
 		if (result == MatchResult.Blackjack) payout = 2.5f * currentPlayerHand.getBet();
 		else if (result == MatchResult.Won) payout = 2 * currentPlayerHand.getBet();
 		else if (result == MatchResult.Push) payout = currentPlayerHand.getBet() + insurancePayout;
-		else payout = insurancePayout;
+		else if (result == MatchResult.Loss) payout = insurancePayout;
 		
 		player.adjustBalance(payout);
 		if (!player.getGuest()) {
