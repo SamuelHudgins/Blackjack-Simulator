@@ -25,7 +25,7 @@ public class BettingScene extends SceneController {
 	@FXML private Text accountEmptyText;
 	
 	@FXML
-	private void initialize() { // Called when this controller's FXML file loads
+	private void initialize() {  // Called when this controller's FXML file loads
 		betSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
@@ -37,8 +37,8 @@ public class BettingScene extends SceneController {
 		});
 		
 		player = Player.getInstance();
-		if (player.getBalance() <= 0) {			
-			// Reset the player's stats and give them money if their balance is depleted.
+		if (player.getBalance() <= 1) {			
+			// Reset the player's stats and give them money if their balance is too low.
 			Player player = Player.getInstance();
 			DatabaseManager.getInstance().resetUserStats(player.getUsername(), Player.START_BALANCE);
 			player.setBalance(Player.START_BALANCE);

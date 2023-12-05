@@ -16,19 +16,8 @@ public class GameObject {
 	 * @return The controller class assigned to the FXML file.
 	 */
 	public static <T> T Instantiate(String url) {
-		return new GameObject().getFXML(url);
-	}
-	
-	/**
-	 * A helper method that returns the controller class that is tied to the FXML file in the provided URL.
-	 * @param <T> The type of classes returned by this method.
-	 * @param url The URL to use to find the FXML file.
-	 * @return The controller class assigned to the FXML file or null if no controller was found or 
-	 * an error occurred.
-	 */
-	private <T> T getFXML(String url) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(url));
+			FXMLLoader loader = new FXMLLoader(GameObject.class.getResource(url));
 			loader.load();
 			return loader.getController();
 		} catch (IOException e) {

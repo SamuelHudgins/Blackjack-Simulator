@@ -57,6 +57,14 @@ public class Player {
 		return instance;
 	}
 	
+	/**
+	 * Check whether a {@code Player} instance is set.
+	 * @return True if the {@code Player} instance is not null. Otherwise, false.
+	 */
+	public static boolean exists() {
+		return instance != null;
+	}
+	
 	public static void remove() {
 		instance = null;
 	}

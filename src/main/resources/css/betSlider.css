@@ -1,12 +1,16 @@
 .slider .track {
-    -fx-pref-height: 10;
+	-fx-pref-height: 10;
 }
 
 .slider:vertical .track {
-    -fx-pref-width: 20;
+	-fx-pref-width: 20;
 }
 
 .slider .thumb {
-    -fx-pref-height: 30;
-    -fx-pref-width: 30;
+	-fx-background-image: url("../images/Slider%20Chip.png");
+	-fx-background-color: transparent;
+	-fx-pref-height: 94;
+	-fx-pref-width: 94;
+	-fx-scale-x: 0.75;
+	-fx-scale-y: 0.75;
 }

@@ -6,6 +6,6 @@
 
 <ImageView fx:id="cardImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.Card">
    <image>
-      <Image url="@../images/2-C.png" />
+      <Image url="@../images/BACK.png" />
    </image>
 </ImageView>

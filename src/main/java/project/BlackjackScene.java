@@ -1,11 +1,19 @@
 package project;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /**
  * Extends the {@code SceneController} and manages the 
@@ -15,36 +23,40 @@ import javafx.scene.layout.StackPane;
 public class BlackjackScene extends SceneController {
 
 	@FXML private Pane boardPane;
+	@FXML private Pane deckPane;
 	@FXML private Pane removedCardPane;
 	
 	@FXML private Button placeBetButton;	
 	@FXML private Button mainMenuButton;
-	@FXML private HBox matchHBox;	
 	@FXML private HBox endMatchHBox;
 	
 	@FXML private Label playerBankLabel;	
-	@FXML private Label playerBetLabel;	
+	@FXML private Label playerBetLabel;
+	@FXML private Label playerInsuranceBetLabel;
 	
 	@FXML private Button hitButton;	
 	@FXML private Button doubleBetButton;	
 	@FXML private Button standButton;	
 	@FXML private Button splitButton;	
 	@FXML private Button insuranceButton;	
-	@FXML private Button evenMoneyButton;	
 	
 	@FXML private Pane playerCardPane;
 	@FXML private Pane playerSplitPane1;
 	@FXML private Pane playerSplitPane2;
 	@FXML private Pane playerSplitPane3;
 	@FXML private Label playerHandLabel;
-	@FXML private Label playerStatusLabel;
+	private MatchBanner playerBanner;
 	
 	@FXML private Pane dealerCardPane;
 	@FXML private Label dealerHandLabel;
-	@FXML private Label dealerStatusLabel;
+	private MatchBanner dealerBanner;
+	
+	private MatchBanner pushBanner;
+	@FXML private ImageView vignetteImage;
+	private final double VIGNETTE_TIME = 0.5;
+	private final double VIGNETTE_OPACITY = 0.5;
 	
 	@FXML private Label insuranceLostLabel;
-	@FXML private Label matchResultsLabel;
 	
 	private BlackjackMatch blackjackMatch;
 	
@@ -65,8 +77,8 @@ public class BlackjackScene extends SceneController {
 		return null;
 	}
 	
-	public Label getMatchResultsLabel() {
-		return matchResultsLabel;
+	public Pane getDeckPane() {
+		return deckPane;
 	}
 	
 	public Pane getRemovedCardPane() {
@@ -77,20 +89,16 @@ public class BlackjackScene extends SceneController {
 	private void initialize() {
 		placeBetButton.setVisible(false);
 		mainMenuButton.setVisible(false);
-		matchHBox.setVisible(true);
 		endMatchHBox.setVisible(false);
-		matchResultsLabel.setText("");
 		insuranceLostLabel.setVisible(false);
 		playerHandLabel.setText("");
-		playerStatusLabel.setText("");
 		dealerHandLabel.setText("");
-		dealerStatusLabel.setText("");
 		hitButton.setVisible(false);
 		doubleBetButton.setVisible(false);
 		standButton.setVisible(false);
 		splitButton.setVisible(false);
 		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
+		vignetteImage.setOpacity(0);
 	}
 	
 	/**
@@ -99,12 +107,28 @@ public class BlackjackScene extends SceneController {
 	 */
 	public void setup() {
 		Player player = Player.getInstance();
-		playerBankLabel.setText("Bank: $" + (player.getBalance()));
-		playerBetLabel.setText("Bet: $" + Double.toString(player.getBet()));
-		HandDisplay playerHandDisplay = new HandDisplay(playerHandLabel, playerStatusLabel);
-		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel, dealerStatusLabel);		
+		setPlayerBankLabel(Double.toString(player.getBalance()));
+		setPlayerBetLabel(Double.toString(player.getBet()));
+		HandDisplay playerHandDisplay = new HandDisplay(playerHandLabel);
+		HandDisplay dealerHandDisplay = new HandDisplay(dealerHandLabel);		
 		blackjackMatch = new BlackjackMatch(this, playerHandDisplay, dealerHandDisplay);
 		Pane [] playerCardPanes = new Pane[] { playerCardPane, playerSplitPane1, playerSplitPane2, playerSplitPane3 };
+		playerBanner = GameObject.Instantiate("MatchBanner.fxml");
+		playerBanner.setParentPane(boardPane);
+		playerBanner.setSceneNode(boardPane);
+		playerBanner.setPosition(playerCardPane);
+		playerBanner.setPlayer("Player");
+		
+		dealerBanner = GameObject.Instantiate("MatchBanner.fxml");
+		dealerBanner.setParentPane(boardPane);
+		dealerBanner.setSceneNode(boardPane);
+		dealerBanner.setPosition(dealerCardPane);
+		dealerBanner.setPlayer("Dealer");
+		
+		pushBanner = GameObject.Instantiate("MatchBanner.fxml");
+		pushBanner.setParentPane(boardPane);
+		pushBanner.setSceneNode(boardPane);
+		pushBanner.setPosition(0, 0);
 		blackjackMatch.start(boardPane, playerCardPanes, dealerCardPane);
 	}
 	
@@ -113,8 +137,60 @@ public class BlackjackScene extends SceneController {
 		doubleBetButton.setVisible(canDouble);
 		standButton.setVisible(true);
 		splitButton.setVisible(canSplit);
-		if (allowEvenMoney) evenMoneyButton.setVisible(true);
-		else if (allowInsurance) insuranceButton.setVisible(true);
+		insuranceButton.setVisible(allowEvenMoney || allowInsurance);
+		if (allowEvenMoney) {
+			insuranceButton.setText("Even Money");
+		}
+		else if (allowInsurance) {
+			insuranceButton.setText("Insurance");
+		}
+		setMatchOptionsDisabled(false);
+	}
+	
+	public void setMatchOptionsDisabled(boolean disabled) {
+		hitButton.setDisable(disabled);
+		doubleBetButton.setDisable(disabled);
+		standButton.setDisable(disabled);
+		splitButton.setDisable(disabled);
+		insuranceButton.setDisable(disabled);
+		if (disabled) resetButtonEffects();
+	}
+	
+	public void showBestOption(Hand playerHand, Hand dealerHand) {
+		resetButtonEffects();
+		BestChoice choice = OddsGenerator.getInstance().getBestChoice(playerHand, dealerHand);
+		switch (choice) {
+			case Hit:
+				highlightButton(hitButton);
+				break;
+			case Stand:
+				highlightButton(standButton);
+				break;
+			case Double:
+				highlightButton(doubleBetButton);
+				break;
+			case Split:
+				highlightButton(splitButton);
+				break;	
+		}		
+	}
+	
+	private void highlightButton(Button button) {
+		if (!button.isVisible()) return;
+		DropShadow dropShadow = new DropShadow();
+		dropShadow.setBlurType(BlurType.GAUSSIAN);
+		dropShadow.setWidth(50);
+		dropShadow.setHeight(50);
+		dropShadow.setSpread(0.5);
+		dropShadow.setColor(Color.WHITE);
+		button.setEffect(dropShadow);
+	}
+	
+	private void resetButtonEffects() {
+		hitButton.setEffect(null);
+		standButton.setEffect(null);
+		doubleBetButton.setEffect(null);
+		splitButton.setEffect(null);
 	}
 	
 	public void hideMatchOptions() {
@@ -123,12 +199,6 @@ public class BlackjackScene extends SceneController {
 		standButton.setVisible(false);
 		splitButton.setVisible(false);
 		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
-	}
-	
-	public void hideInsuranceOptions() {
-		insuranceButton.setVisible(false);
-		evenMoneyButton.setVisible(false);
 	}
 	
 	public void showSplitButton(boolean canSplit) {
@@ -137,25 +207,29 @@ public class BlackjackScene extends SceneController {
 	
 	@FXML
 	private void onHitButtonPressed() {
+		setMatchOptionsDisabled(true);
 		doubleBetButton.setVisible(false);
-		hideInsuranceOptions();
+		insuranceButton.setVisible(false);
 		blackjackMatch.playerHit();
 	}
 	
 	@FXML
 	private void onDoubleButtonPressed() {
+		setMatchOptionsDisabled(true);
 		doubleBetButton.setVisible(false);
-		hideInsuranceOptions();
+		insuranceButton.setVisible(false);
 		blackjackMatch.doublePlayerBet();
 	}
 	
 	@FXML
 	private void onStandButtonPressed() {
-		blackjackMatch.playerStand();
+		setMatchOptionsDisabled(true);
+		blackjackMatch.finishPlayerHand();
 	}
 	
 	@FXML
 	private void onSplitButtonPressed() {
+		setMatchOptionsDisabled(true);
 		splitButton.setVisible(false);
 		blackjackMatch.playerSplit();
 	}
@@ -163,23 +237,7 @@ public class BlackjackScene extends SceneController {
 	@FXML
 	private void oninsuranceButtonPressed() {
 		insuranceButton.setVisible(false);
-		matchHBox.setVisible(false);
 		blackjackMatch.useInsurance();
-	}
-	
-	@FXML
-	private void onEvenMoneyButtonPressed() {
-		evenMoneyButton.setVisible(false);
-		matchHBox.setVisible(false);
-		blackjackMatch.useInsurance();
-	}
-	
-	public void showInusuranceLost() {
-		insuranceLostLabel.setVisible(true);
-		Routine.doAfter(() -> { 
-			insuranceLostLabel.setVisible(false); 
-			matchHBox.setVisible(true);
-		}, 2000);
 	}
 	
 	public void setPlayerBankLabel(String text) {
@@ -187,22 +245,75 @@ public class BlackjackScene extends SceneController {
 	}
 	
 	public void setPlayerBetLabel(String text) {
-		playerBetLabel.setText("Bet: $" + text);
+		playerBetLabel.setText("$" + text.replace(".0", ""));
 	}
 	
-	public void setMatchResultText(String matchResult) {
-		matchResultsLabel.setText(matchResult);
+	public void setPlayerInsuranceBetLabel(String text) {
+		playerInsuranceBetLabel.setText("$" + text.replace(".0", ""));
+	}
+	
+	public void showPlayerBanner(MatchResult result) {
+		playerBanner.showBanner(result);
+	}
+	
+	public void showDealerBanner(MatchResult result) {
+		dealerBanner.showBanner(result);
+	}
+	
+	public void hidePlayerBanner() {
+		playerBanner.hideBanner();
+	}
+	
+	public void hideDealerBanner() {
+		dealerBanner.hideBanner();
+	}
+	
+	public void showPushBanner() {
+		pushBanner.showBanner(MatchResult.Push);
+		applyVignette();
+	}
+	
+	public void showMatchResults(MatchResult playerMatchResult, MatchResult dealerMatchResult) {
+		if (playerMatchResult == MatchResult.Blackjack) playerMatchResult = MatchResult.Won;
+		if (dealerMatchResult == MatchResult.Blackjack) dealerMatchResult = MatchResult.Won;
+		
+		applyVignette();
+		playerBanner.showBanner(playerMatchResult);
+		dealerBanner.showBanner(dealerMatchResult);
+	}
+	
+	public void hideMatchResults() {
+		hidePlayerBanner();
+		hideDealerBanner();
+		pushBanner.hideBanner();
+		removeVignette();
+	}
+	
+	private void applyVignette() {
+		vignetteImage.toFront();
+		Timeline vignetteAnim = new Timeline(
+			new KeyFrame(Duration.seconds(0), new KeyValue(vignetteImage.opacityProperty(), 0)),
+			new KeyFrame(Duration.seconds(VIGNETTE_TIME), new KeyValue(vignetteImage.opacityProperty(), VIGNETTE_OPACITY)));
+		vignetteAnim.play();
+	}
+	
+	private void removeVignette() {
+		Timeline vignetteAnim = new Timeline(
+			new KeyFrame(Duration.seconds(0), new KeyValue(vignetteImage.opacityProperty(), VIGNETTE_OPACITY)),
+			new KeyFrame(Duration.seconds(VIGNETTE_TIME), new KeyValue(vignetteImage.opacityProperty(), 0)));
+		vignetteAnim.play();
 	}
 	
 	public void showEndMatchOptions(boolean balanceDepleted) {
 		if (!balanceDepleted) {
-			matchHBox.setVisible(false);
+			hideMatchOptions();
 			endMatchHBox.setVisible(true);
+			endMatchHBox.toFront();
 			mainMenuButton.setVisible(true);
 			placeBetButton.setVisible(true);
 		}
 		else {
-			// Reset the player's stats and give them money if their balance is depleted.
+			// Reset the player's stats and give them money if their balance is too low.
 			Player player = Player.getInstance();
 			DatabaseManager.getInstance().resetUserStats(player.getUsername(), Player.START_BALANCE);
 			player.setBalance(Player.START_BALANCE);
@@ -213,7 +324,7 @@ public class BlackjackScene extends SceneController {
 				text += "\n\nAn anonymous donor\nhas gifted you $" + Player.START_BALANCE + ".";
 				gameOverText.setText(text);
 				gameOverPane.toFront();
-			}, 2000);			
+			}, 2);			
 		}
 	}
 	
