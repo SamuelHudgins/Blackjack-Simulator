@@ -1,4 +1,5 @@
-# Description
+![image](https://github.com/SamuelHudgins/Blackjack-Simulator/assets/91093190/450d400e-45c5-44f1-9c6b-3d8afa714100)
+
 Blackjack Simulator is a 2D desktop application developed in Java. It's based on the popular blackjack casino game and allows players to perform several actions associated with most blackjack games, including hitting, standing, doubling, splitting, and accepting insurance. The player and dealer play with a single 52-card deck in this version.
 
 # Features
