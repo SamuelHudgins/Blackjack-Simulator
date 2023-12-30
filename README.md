@@ -37,8 +37,7 @@ Blackjack Simulator is a 2D desktop application developed in Java. It's based on
 - [Blackjack Apprenticeship](https://www.blackjackapprenticeship.com/blackjack-strategy-charts/) for their blackjack strategy chart.
 
 # Contributors
-- Robert Carswell
-- Jordan DeLaGarza
-- Patrick Smith
-- Jose Reyes
-- Samuel Hudgins
+- [Robert Carswell](https://github.com/RobC-star)
+- [Jordan DeLaGarza](https://github.com/fleapoodle)
+- [Patrick Smith](https://github.com/BBlackwave)
+- [Jose Reyes](https://github.com/Khakipapi)
